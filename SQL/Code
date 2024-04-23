@@ -1,0 +1,21 @@
+use sql10700485;
+
+Create table Usuario(
+    ID_Nickname char(32) NOT NULL primary key,
+    NombreEquipo varchar(54) not null,
+    Contraseña char(32) not null,
+    Mail char(54) not null,
+    Presupuesto float(3) not null,
+    foreign key(NombreEquipo) references Equipo(ID_NombreEquipo)
+);
+create table Equipo(
+	ID_NombreEquipo varchar(54) not null primary key,
+	Puntuacion int(4) not null
+);
+
+
+CREATE index Index1 
+on Usuario (ID_Nickname, NombreEquipo, Contraseña, Mail, Presupuesto);
+
+Create index Index2
+on Equipo (ID_NombreEquipo);
