@@ -5,8 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
++     "dev": "node ./src/interface/index.js",
+    },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Stramount/footballfate-backend.git"
