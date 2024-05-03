@@ -1,16 +1,24 @@
 import { Router } from "express";
 import * as Controller from "../controllers/middlewares.controller.js"
+import { AdminRouter } from "./admin.routes.js";
 
-export const router = Router()
+export const APIrouter = Router()
 
-const apiPath = "/api/"
 
 // hacer alguna confirmación para proteger la api
-router.use(apiPath , (req , res, next) => {console.log("middleware") ; next()})
+APIrouter.use("/admin" , AdminRouter)
 
-router.get(apiPath , (req , res) => res.send("hi")) // bienvenida a la API
+APIrouter.use("/" , (req , res, next) => {
+    console.log("middleware")
+    next()
+})
 
-router.all(apiPath + "usuario" , Controller.userController)
+APIrouter.get("/", (req , res) => res.send("hi")) // bienvenida a la API
 
-router.get(apiPath + "equipo/:user" , (req , res) => {res.send("obtener a " + req.params.user)})
-router.put(apiPath + "equipo/:user" , (req , res) => res.send("modificar a " + req.params.user))
+APIrouter.all(["/usuario", "/usuario/:user"], Controller.userController) // router para la cuenta (GET , PATCH , PUT , DELETE)
+
+APIrouter.get(["/equipo", "/equipo/:nombreEquipo"], (req , res) => {res.send("obtener a el equipo de alguien")}) // leer un equipo
+APIrouter.patch(["/equipo", "/equipo/:nombreEquipo"], (req , res) => {res.send("modificar un equipo")})
+
+APIrouter.get(["/jugador", "/jugador/:name"] , (req , res) => {res.send("Obtener 1 o más jugadores y sus estadisticas")})
+APIrouter.patch("/jugador/:name" , (req , res) => {res.send("Sumar a su ultima estadistica, una transferencia")})
