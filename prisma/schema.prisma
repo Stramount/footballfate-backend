@@ -4,24 +4,113 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
+  url      = "mysql://ufzh6kvtb8p3vscn:0MUWDt9B4CkOnPGJtePb@bopa9hdltezfh0vkpavn-mysql.services.clever-cloud.com:3306/bopa9hdltezfh0vkpavn"
 }
 
 model Equipo {
-  ID_Equipo    Int       @id @default(autoincrement())
-  NombreEquipo String    @db.VarChar(75)
+  ID           Int            @id @default(autoincrement())
+  NombreEquipo String         @db.VarChar(75)
   Puntuacion   Int
-  Usuario      Usuario[]
+  ID_Usuario   Int
+  Alineacion   Alineacion[]
+  Banca        Banca[]
+  Usuario      Usuario        @relation(fields: [ID_Usuario], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Equipo_ibfk_1")
+  Equipo_Fecha Equipo_Fecha[]
+
+  @@index([ID_Usuario], map: "ID_Usuario")
 }
 
 model Usuario {
-  ID_Usuario  Int    @id @default(autoincrement())
-  Nickname    String @db.Char(35)
-  ID_Equipo   Int
-  Contrase_a  String @map("Contraseña") @db.Char(32)
-  Mail        String @db.Char(54)
-  Presupuesto Float  @db.Float
-  Equipo      Equipo @relation(fields: [ID_Equipo], references: [ID_Equipo], onDelete: NoAction, onUpdate: NoAction, map: "Usuario_ibfk_1")
+  ID          Int      @id @default(autoincrement())
+  Nickname    String   @db.Char(35)
+  Contrase_a  String   @map("Contraseña") @db.Char(32)
+  Mail        String   @db.Char(54)
+  Presupuesto Float    @db.Float
+  Equipo      Equipo[]
+}
+
+model Alineacion {
+  ID                 Int                  @id @default(autoincrement())
+  ID_Equipo          Int
+  posgk              Int
+  pos1               Int
+  pos2               Int
+  pos3               Int
+  pos4               Int
+  pos5               Int
+  pos6               Int
+  Equipo             Equipo               @relation(fields: [ID_Equipo], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Alineacion_ibfk_1")
+  Jugador_Alineacion Jugador_Alineacion[]
+  Jugador_Banca      Jugador_Banca[]
 
   @@index([ID_Equipo], map: "ID_Equipo")
+}
+
+model Banca {
+  ID        Int    @id @default(autoincrement())
+  ID_Equipo Int
+  pos1      Int
+  pos2      Int
+  Equipo    Equipo @relation(fields: [ID_Equipo], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Banca_ibfk_1")
+
+  @@index([ID_Equipo], map: "ID_Equipo")
+}
+
+model Equipo_Fecha {
+  ID_Equipo Int
+  ID_Fecha  Int
+  Equipo    Equipo @relation(fields: [ID_Equipo], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Equipo_Fecha_ibfk_1")
+  Fecha     Fecha  @relation(fields: [ID_Fecha], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Equipo_Fecha_ibfk_2")
+
+  @@id([ID_Equipo, ID_Fecha])
+  @@index([ID_Fecha], map: "ID_Fecha")
+}
+
+model Estadistica {
+  ID         Int     @id @default(autoincrement())
+  ID_Fecha   Int
+  ID_Jugador Int
+  Fecha      Fecha   @relation(fields: [ID_Fecha], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Estadistica_ibfk_1")
+  Jugador    Jugador @relation(fields: [ID_Jugador], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Estadistica_ibfk_2")
+
+  @@index([ID_Fecha], map: "ID_Fecha")
+  @@index([ID_Jugador], map: "ID_Jugador")
+}
+
+model Fecha {
+  ID           Int            @id @default(autoincrement())
+  fecha        DateTime       @db.Date
+  Equipo_Fecha Equipo_Fecha[]
+  Estadistica  Estadistica[]
+}
+
+model Jugador {
+  ID                 Int                  @id @default(autoincrement())
+  nombre             String               @db.Char(15)
+  apellido           String               @db.Char(20)
+  categoria          String               @db.Char(3)
+  precio             Int
+  Estadistica        Estadistica[]
+  Jugador_Alineacion Jugador_Alineacion[]
+  Jugador_Banca      Jugador_Banca[]
+}
+
+model Jugador_Alineacion {
+  ID_Alineacion Int
+  ID_Jugador    Int
+  Alineacion    Alineacion @relation(fields: [ID_Alineacion], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Jugador_Alineacion_ibfk_1")
+  Jugador       Jugador    @relation(fields: [ID_Jugador], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Jugador_Alineacion_ibfk_2")
+
+  @@id([ID_Alineacion, ID_Jugador])
+  @@index([ID_Jugador], map: "ID_Jugador")
+}
+
+model Jugador_Banca {
+  ID_Banca   Int
+  ID_Jugador Int
+  Alineacion Alineacion @relation(fields: [ID_Banca], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Jugador_Banca_ibfk_1")
+  Jugador    Jugador    @relation(fields: [ID_Jugador], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Jugador_Banca_ibfk_2")
+
+  @@id([ID_Banca, ID_Jugador])
+  @@index([ID_Jugador], map: "ID_Jugador")
 }
