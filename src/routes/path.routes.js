@@ -1,6 +1,6 @@
 import { Router } from "express";
-import * as Controller from "../controllers/middlewares.controller.js"
 import { AdminRouter } from "./admin.routes.js";
+import mainController from "../controllers/main.controller.js";
 
 export const APIrouter = Router()
 
@@ -15,7 +15,7 @@ APIrouter.use("/" , (req , res, next) => {
 
 APIrouter.get("/", (req , res) => res.send("hi")) // bienvenida a la API
 
-APIrouter.all(["/usuario", "/usuario/:user"], Controller.userController) // router para la cuenta (GET , PATCH , PUT , DELETE)
+APIrouter.all(["/usuario", "/usuario/:user"], mainController.database.entities.user.userHi) // router para la cuenta (GET , PATCH , PUT , DELETE)
 
 APIrouter.get(["/equipo", "/equipo/:nombreEquipo"], (req , res) => {res.send("obtener a el equipo de alguien")}) // leer un equipo
 APIrouter.patch(["/equipo", "/equipo/:nombreEquipo"], (req , res) => {res.send("modificar un equipo")})
