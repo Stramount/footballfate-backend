@@ -5,8 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-        "dev" : "node ./src/interface/index.js",
-        "test" : "node --test ./fetch.test.js"
+     "dev": "node ./src/interface/index.js"
     },
   "repository": {
     "type": "git",
