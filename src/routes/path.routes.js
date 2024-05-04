@@ -15,10 +15,13 @@ APIrouter.use("/" , (req , res, next) => {
 
 APIrouter.get("/", (req , res) => res.send("hi")) // bienvenida a la API
 
-APIrouter.all(["/usuario", "/usuario/:user"], mainController.database.entities.user.userHi) // router para la cuenta (GET , PATCH , PUT , DELETE)
+APIrouter.post("/auth/login" , mainController.database.entities.account.handleAccount) // router para login (POST)
+APIrouter.post("/auth/register" , mainController.database.entities.account.handleAccount) // router para registro (POST)
 
-APIrouter.get(["/equipo", "/equipo/:nombreEquipo"], (req , res) => {res.send("obtener a el equipo de alguien")}) // leer un equipo
-APIrouter.patch(["/equipo", "/equipo/:nombreEquipo"], (req , res) => {res.send("modificar un equipo")})
+APIrouter.all(["/cuenta" , "/cuenta/:email"] , mainController.database.entities.account.handleAccount) // router para la cuenta (GET , PATCH)
 
-APIrouter.get(["/jugador", "/jugador/:name"] , (req , res) => {res.send("Obtener 1 o más jugadores y sus estadisticas")})
-APIrouter.patch("/jugador/:name" , (req , res) => {res.send("Sumar a su ultima estadistica, una transferencia")})
+APIrouter.all(["/usuario", "/usuario/:user"], mainController.database.entities.user.handleUser) // router para el usuario (GET , PATCH)
+
+APIrouter.all(["/equipo", "/equipo/:nombreEquipo"], mainController.database.entities.team.handleTeam) // leer un equipo o editarlo
+
+APIrouter.all(["/jugador", "/jugador/:name"] , mainController.database.entities.player.handlePlayer) // leer un jugador o editarlo

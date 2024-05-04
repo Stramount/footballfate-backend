@@ -1,4 +1,4 @@
-import { Database } from "./database.controller";
+import Database from "./database.controller";
 
 class MainController{
     constructor(){
