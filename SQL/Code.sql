@@ -8,7 +8,7 @@ Create table Usuario(
 
 CREATE table Fecha(
     ID int not null auto_increment primary key,
-    fecha datetime not null
+    fecha date not null
 );
 
 CREATE table Jugador(
@@ -19,33 +19,33 @@ CREATE table Jugador(
     precio int not null
 );
 
+create table Equipo(
+	ID INT not null auto_increment primary key,
+    NombreEquipo varchar(75) not null,
+	Puntuacion int(4) not null,
+    ID_Usuario int not null,
+    foreign key(ID_Usuario) references Usuario(ID)
+);
+
 CREATE table Alineacion(
     ID INT NOT NULL auto_increment primary key,
+    ID_Equipo INT NOT NULL,
     posgk int not null,
     pos1 int not null,
     pos2 int not null,
     pos3 int not null,
     pos4 int not null,
     pos5 int not null,
-    pos6 int not null
+    pos6 int not null,
+    FOREIGN KEY(ID_Equipo) REFERENCES Equipo(ID)
 );
 
 CREATE table Banca(
     ID INT NOT NULL auto_increment primary key,
-    pos1 int not null,
-    pos2 int not null
-);
-
-create table Equipo(
-	ID INT not null auto_increment primary key,
-    NombreEquipo varchar(75) not null,
-	Puntuacion int(4) not null,
-    ID_Usuario int not null,
-    ID_Banca int not null,
-    ID_Alineacion int not null,
-    foreign key(ID_Usuario) references Usuario(ID),
-    foreign key(ID_Banca) references Banca(ID),
-    foreign key(ID_Alineacion) references Alineacion(ID)
+    ID_Equipo INT NOT NULL,
+	pos1 int not null,
+    pos2 int not NULL,
+	 FOREIGN KEY(ID_Equipo) REFERENCES Equipo(ID)
 );
 
 CREATE table Estadistica(
