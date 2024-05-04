@@ -2,26 +2,21 @@ GET http://localhost:8000/api HTTP/1.1
 
 #####
 
-POST http://localhost:8000/api/usuario HTTP/1.1
+GET http://localhost:8000/api/usuario HTTP/1.1
 Content-Type: application/json
-
-{
-    "naaame" : "hola",
-    "email" : "hey"
-}
+email: test@gmail.com
+password: test1234
 
 #####
 
-PATCH http://localhost:8000/api/usuario/?name=javier HTTP/1.1
+PUT http://localhost:8000/api/usuario HTTP/1.1
+Content-Type: application/json
 
-###
+{
+    "email": "test@gmail.com",
+    "teamname": "testTeam",
+    "username": "testUser",
+    "password": "test1234"
+}
 
-PATCH http://localhost:8000/api/usuario/1 HTTP/1.1
-
-###
-
-GET http://localhost:8000/api/equipo HTTP/1.1
-
-###
-
-GET http://localhost:8000/api/admin HTTP/1.1
+#####
