@@ -1,7 +1,11 @@
 import Validator from "../src/controllers/validator.controller.js"
 import { PrismaClient } from "@prisma/client"
 
+
 const prisma = new PrismaClient()
+
+const PRISMA = new PrismaClient()
+
 
 async function log(req) {
     console.log("Metodo Usado: " + req.method)
@@ -17,6 +21,7 @@ async function log(req) {
     console.log("Cookies")
     console.log(req.cookies.token)
 }
+
 
 async function crear_usuario(param){
     

@@ -1,5 +1,9 @@
 import { app , sentry , express_ } from "./app.js";
 import {APIrouter} from "../routes/path.routes.js"
+import cookieParse from 'cookie-parser'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 /*
 sentry.init({
@@ -23,6 +27,7 @@ app.use(sentry.Handlers.tracingHandler());
 console.log("sentry activo")
 */
 // All your controllers should live here
+app.use(cookieParse())
 app.use(express_.json())
 app.use("/api" , APIrouter)
 /*
