@@ -21,12 +21,14 @@ model Equipo {
 }
 
 model Usuario {
-  ID          Int      @id @default(autoincrement())
-  Nickname    String   @db.Char(35)
-  Contrase_a  String   @map("Contraseña") @db.Char(32)
-  Mail        String   @db.Char(54)
-  Presupuesto Float    @db.Float
-  Equipo      Equipo[]
+  ID                         Int      @id @default(autoincrement())
+  Nickname                   String   @db.Char(35)
+  Contrase_a                 String   @map("Contraseña") @db.Char(32)
+  Mail                       String   @db.Char(54)
+  Presupuesto                Float    @db.Float
+  Transferencias_Disponibles Int?
+  Wildcard                   Boolean?
+  Equipo                     Equipo[]
 }
 
 model Alineacion {
