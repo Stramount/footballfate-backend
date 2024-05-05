@@ -6,12 +6,12 @@
                 "enableSsl": "Disabled"
             },
             "previewLimit": 50,
-            "server": "sql10.freesqldatabase.com",
+            "server": "bopa9hdltezfh0vkpavn-mysql.services.clever-cloud.com",
             "port": 3306,
             "driver": "MySQL",
-            "database": "sql10700485",
-            "username": "sql10700485",
-            "name": "La BD",
+            "username": "ufzh6kvtb8p3vscn",
+            "database": "bopa9hdltezfh0vkpavn",
+            "name": "cone",
             "askForPassword": true
         }
     ]
