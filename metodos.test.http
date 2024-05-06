@@ -10,14 +10,15 @@
 
 # #####
 
-PATCH http://localhost:8000/api/cuenta/2 HTTP/1.1
+PATCH http://localhost:8000/api/cuenta/3 HTTP/1.1
 Content-Type: application/json
 
 {
-    "email": "tumama@gamil.com",
-    "username": "CHapeng",
-    "password": "chapengu",
-    "teamname": "wollok"
+    "username": "moschencito2"
 }
 
 #####
+
+
+
+param."email"

@@ -23,10 +23,6 @@ async function log(req) {
 }
 
 
-async function crear_usuario(param){
-    
-}
-
 export class Account {
     static prisma = PRISMA
 
@@ -47,6 +43,7 @@ export class Account {
         if (req.url.match(/cuenta/)) {
             if (req.method == "GET") res.send(await Account.getAccount(req , res , next))
             else if (req.method == "PATCH") res.send(await Account.UpdateAccount(req , res , next))
+            return
         }
         
         if (req.method == "POST" && req.url.match(/login/)) res.send(await Account.login(req , res , next))
@@ -62,31 +59,46 @@ export class Account {
 
     static async UpdateAccount(req , res , next){
         const id = parseInt(req.params.id)
-        const accountFonud = Account.accounts.find(a => a.id === id)
-        if (!accountFonud)
-            return 'La cuenta no existe'
-        Account.accounts[Account.accounts.indexOf(accountFonud)] = {
-            ...req.body,
-            id
-        }
-        return Account.accounts
+        const user = await prisma.usuario.update({
+            where: {
+                ID: id
+            },
+            data: {
+                Nickname: req.body.username,
+                Contrase_a: req.body.password,
+                Mail: req.body.email,
+                Equipo: {
+                    update: {
+                        where: {
+                            ID: id
+                        },
+                        data: {
+                            NombreEquipo: req.body.teamname
+                        }
+                    }
+                }
+            }
+        })
+
+        return user
     }
 
     static async login(req , res , next){
-        let acc = Account.accounts[req.body.email]
-        try {
-            const token = await Validator.createToken({ email: req.body.email })
-        } catch(e) {
-            console.log(e)
-        }
-        res.cookie('token', token)
-        if (acc && acc.password == req.body.password) return acc
+        const token = await Validator.createToken({ email: req.body.email })
+        let { email, password } = req.body
+        const user = await prisma.usuario.findFirst({
+            where: {
+                Mail: email,
+                Contrase_a: password
+            }
+        })
+        if (!user) {res.status(404) ; return "no hay na"}
 
-        return "Usuario no encontrado"
+        res.cookie('token', token)
+        return user
     }
 
     static async register(req , res , next){
-        if (Account.accounts.find(a => a.email === req.body.email)) return "Usuario ya registrado"
         try {
             const token = await Validator.createToken({ email: req.body.email})
             console.log('token is generated')
@@ -98,9 +110,31 @@ export class Account {
             console.log('Hay un error')
         }
         
-        return Account.accounts
+        const user = await prisma.usuario.create({
+            data: {
+                Nickname: req.body["username"],
+                Contrase_a: req.body["password"],
+                Mail: req.body["email"],
+                Presupuesto: 100,
+                Transferencias: 2,
+                Wildcard: true,
+                Equipo: {
+                    create: {
+                        data:{
+                            NombreEquipo: req.body["teamname"],
+                            Puntuacion: 0
+                        }
+                    }
+                }
+            }
+        })
+    
+        return user
+
     }
 }
+
+
 
 export class User {
     static prisma = PRISMA

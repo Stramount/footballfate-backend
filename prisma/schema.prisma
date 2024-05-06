@@ -91,7 +91,7 @@ model Jugador {
   nombre             String               @db.Char(15)
   apellido           String               @db.Char(20)
   categoria          String               @db.Char(3)
-  precio             Int
+  precio             Float                @db.Float
   Estadistica        Estadistica[]
   Jugador_Alineacion Jugador_Alineacion[]
   Jugador_Banca      Jugador_Banca[]
