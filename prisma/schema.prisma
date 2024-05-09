@@ -14,7 +14,7 @@ model Equipo {
   ID_Usuario   Int
   Alineacion   Alineacion[]
   Banca        Banca[]
-  Usuario      Usuario        @relation(fields: [ID_Usuario], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Equipo_ibfk_1")
+  Usuario      Usuario        @relation(fields: [ID_Usuario], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "Equipo_ibfk_1")
   Equipo_Fecha Equipo_Fecha[]
 
   @@index([ID_Usuario], map: "ID_Usuario")

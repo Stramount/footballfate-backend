@@ -36,12 +36,22 @@ export class Account {
         }
     ]
 
+    static async deleteAccount(req, res, next){
+        await prisma.usuario.delete({
+            where: {
+                ID : parseInt(req.params.id)
+            }
+        })
+        return "Se borro xD"
+    }
+   
     static async handleAccount(req , res , next){
         
         await log(req)
         
         if (req.url.match(/cuenta/)) {
             if (req.method == "GET") res.send(await Account.getAccount(req , res , next))
+            else if (req.method == "DELETE") res.send(await Account.deleteAccount(req, res, next))
             else if (req.method == "PATCH") res.send(await Account.UpdateAccount(req , res , next))
             return
         }
@@ -120,10 +130,8 @@ export class Account {
                 Wildcard: true,
                 Equipo: {
                     create: {
-                        data:{
-                            NombreEquipo: req.body["teamname"],
-                            Puntuacion: 0
-                        }
+                        NombreEquipo: req.body["teamname"],
+                        Puntuacion: 0
                     }
                 }
             }

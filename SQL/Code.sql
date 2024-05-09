@@ -1,3 +1,5 @@
+set foreign_key_checks = 0;
+
 Create table Usuario(
     ID int NOT NULL auto_increment primary key,
     Nickname char(35) not null,

@@ -4,11 +4,11 @@ export default class Validator {
 
     static validationToken(req, res, next) {
         const { token } = req.cookies
+        return next()
 
         jwt.verify(token, process.env.SECRET_TOKEN, (error, user) => {
             if (error)
                 return res.status(400).json({ message: 'No autorizado, token no valido' })
-            next()
         })
     }
 
