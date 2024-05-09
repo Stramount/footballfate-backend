@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { AdminRouter } from "./admin.routes.js";
 import mainController from "../controllers/main.controller.js";
-import { loginSchema, registerSchema } from "../schemas/auth.schema.js";
 
 export const APIrouter = Router()
 async function log(req) {
@@ -18,7 +17,6 @@ async function log(req) {
     console.log("Cookies")
     console.log(req.cookies.token)
 }
-
 
 // hacer alguna confirmación para proteger la api
 APIrouter.use("/admin" , AdminRouter)
