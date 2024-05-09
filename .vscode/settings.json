@@ -6,12 +6,12 @@
                 "enableSsl": "Disabled"
             },
             "previewLimit": 50,
-            "server": "bopa9hdltezfh0vkpavn-mysql.services.clever-cloud.com",
+            "server": "b9zxleynykc91qou6jse-mysql.services.clever-cloud.com",
             "port": 3306,
             "driver": "MySQL",
-            "username": "ufzh6kvtb8p3vscn",
-            "database": "bopa9hdltezfh0vkpavn",
-            "name": "cone",
+            "database": "b9zxleynykc91qou6jse",
+            "username": "unqgdygbetursdfw",
+            "name": "NuevaDB",
             "askForPassword": true
         }
     ]

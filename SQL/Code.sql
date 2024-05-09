@@ -1,9 +1,13 @@
+set foreign_key_checks = 0;
+
 Create table Usuario(
     ID int NOT NULL auto_increment primary key,
     Nickname char(35) not null,
     Contraseña char(32) not null,
     Mail char(54) not null,
-    Presupuesto float(3) not null
+    Presupuesto float(3) not null,
+    Transferencias int(1),
+    Wildcard boolean
 );
 
 CREATE table Fecha(
@@ -76,6 +80,6 @@ create table Jugador_Banca(
     ID_Banca int not null,
     ID_Jugador int not NULL,
     primary key(ID_Banca, ID_Jugador),
-    foreign key(ID_Banca) references Alineacion(ID),
+    foreign key(ID_Banca) references Banca(ID),
     foreign key(ID_Jugador) references Jugador(ID)
 );
