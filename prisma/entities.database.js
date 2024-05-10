@@ -62,9 +62,13 @@ export class Account {
     }
 
     static async getAccount(req , res , next){
-        if (req.params.email) return Account.accounts[req.params.email]
+        const user = await prisma.usuario.findFirst({
+            where : {
+                ID : req.body.id
+            }
+        })
         
-        return Account.accounts
+        return user
     }
 
     static async UpdateAccount(req , res , next){
@@ -225,20 +229,56 @@ export class Player {
         
         await log(req)
         
-        if (req.method == "GET") res.send(await Player.getPlayer(req , res , next)) 
+        if (req.method == "GET") res.send(await Player.getPlayers(req , res , next)) 
         else if (req.method == "PATCH") res.send(await Player.updatePlayer(req , res , next))
 
         else res.status(403).send("Metodo no permitido")
     }
 
-    static async getPlayer(req , res , next){
-        if (req.params.player) return Player.players[req.params.player]
+    static async getPlayers(req , res , next){
+
+        const players = await prisma.jugador.findMany({
+            where : {
+                nombre: {
+                    contains : req.params.name??""
+                    }
+                },
+            include : {
+                Estadistica : true
+            }   
+            })
+
+        return players
         
-        return Player.players
+        
     }
 
     static async updatePlayer(req , res , next){
         Player.players[req.body.name] = req.body
         return Player.players
+    }
+
+    
+}
+
+
+export class Stat {
+
+
+    static async createStat(req, res, next) {
+        const newStat = await prisma.estadistica.create({
+            data: {
+                ID_Fecha : await prisma.fecha.findFirst({ orderBy : { ID : 'desc'}}),
+                ID_Jugador : req.body.playerId,
+                goles : parseInt(req.body.goals),
+                asistencias : parseInt(req.body.assists),
+                intercepciones : parseInt(req.body.interceptions),
+                atajadas : parseInt(req.body.saves),
+                penalesErrados : parseInt(req.body.failedPenalties),
+                penalesAtajados : parseInt(req.body.savedPenalties),
+                asistioAClase : parse(req.body.attendance)
+            }
+        })
+        return newStat
     }
 }
