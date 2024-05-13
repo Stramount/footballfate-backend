@@ -124,14 +124,29 @@ export class Team {
     static prisma = PRISMA
 
     static async getTeam(req , res , next){
-        if (req.params.team) return Team.teams[req.params.team]
-        
-        return Team.teams
+        // obtener el equipo que se pasa por ID
+        // Realizar un ordenamiento de la alineacion para enviar al front
+        return "un equipo"
+    }
+
+    static async transferPlayer (body) {
+        // recibir del body y utilizar sus propiedades para hacer update
+        return "recibido"
     }
 
     static async updateTeam(req , res , next){
-        Team.teams[req.body.name] = req.body
-        return Team.teams
+        if (req.headers.transfer){
+            return await Team.transferPlayer(req.body)
+        }
+
+        //editar tabla equipo
+        //nombre o puntuacion
+    }
+
+    static async createTeam (req , res , next){
+        // crea un equipo, lo asocia al usuario del param
+        // y lo asocia a la ultima fecha creada
+        return "recibido"
     }
 }
 
@@ -147,17 +162,6 @@ export class Player {
                 asistencias: 0
             }
         }
-    }
-
-
-    static async handlePlayer(req , res , next){
-        
-        await log(req)
-        
-        if (req.method == "GET") res.send(await Player.getPlayers(req , res , next)) 
-        else if (req.method == "PATCH") res.send(await Player.updatePlayer(req , res , next))
-
-        else res.status(403).send("Metodo no permitido")
     }
 
     static async getPlayers(req , res , next){
@@ -187,26 +191,10 @@ export class Player {
         return players
         
     }
-
-    static async updatePlayer(req , res , next){
-        Player.players[req.body.name] = req.body
-        return Player.players
-    }
-
-    
 }
 
 
 export class Stat {
-
-
-    static async handleStat(req, res, next) {
-        
-        await log(req)
-        
-        if (req.method == "POST") res.send(await Stat.createStat(req, res, next))
-    }
-
 
     static async createStat(req, res, next) {
         let helper = await prisma.fecha.findFirst({ select : {ID : true}, orderBy : { ID : 'desc'}})

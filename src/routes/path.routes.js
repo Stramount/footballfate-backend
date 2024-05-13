@@ -36,16 +36,15 @@ APIrouter.post("/auth/register", mainController.validator.validateSchema(registe
 
 APIrouter.use(mainController.validator.validationToken)
 
-APIrouter.get(["/cuenta" , "/cuenta/:id"], mainController.database.entities.account.getAccount) // router para la cuenta (GET)
-APIrouter.patch(["/cuenta/:id"], mainController.database.entities.account.UpdateAccount) // router para la cuenta (PATCH)
-APIrouter.delete(["/cuenta/:id"], mainController.database.entities.account.deleteAccount) // router para la cuenta (DELETE)
+APIrouter.get(["/cuenta" , "/cuenta/:ID"], mainController.database.entities.account.getAccount) // router para la cuenta (GET)
+APIrouter.patch(["/cuenta/:ID"], mainController.database.entities.account.UpdateAccount) // router para la cuenta (PATCH)
+APIrouter.delete(["/cuenta/:ID"], mainController.database.entities.account.deleteAccount) // router para la cuenta (DELETE)
 
-APIrouter.get(["/equipo", "/equipo/:nombreEquipo"], mainController.database.entities.team.getTeam) // leer un equipo
-APIrouter.patch(["/equipo/:nombreEquipo"], mainController.database.entities.team.updateTeam) // editar un equipo
+APIrouter.post("/equipo" , mainController.database.entities.team.createTeam) //crea un equipo
+APIrouter.get(["/equipo", "/equipo/:ID"], mainController.database.entities.team.getTeam) // leer un equipo
+APIrouter.patch(["/equipo/:ID"], mainController.database.entities.team.updateTeam) // editar un equipo
 
 
-APIrouter.post(["/stat", "/stat/:nombreJugador"], mainController.database.entities.stat.handleStat) // crea stats de un jugador
+APIrouter.post(["/stat", "/stat/:ID"], mainController.database.entities.stat.createStat) // crea stats de un jugador
 
-APIrouter.get(["/jugador", "/jugador/:name"], mainController.database.entities.player.getPlayers) // leer un jugador o editarlo
-APIrouter.patch(["/jugador/:name"], mainController.database.entities.player.updatePlayer) // leer un jugador o editarlo
-
+APIrouter.get(["/jugador", "/jugador/:ID"], mainController.database.entities.player.getPlayers) // leer un jugador o editarlo
