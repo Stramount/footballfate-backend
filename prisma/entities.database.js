@@ -75,7 +75,6 @@ export class Account {
             const token = await Validator.createToken({ email: req.body.email})
             console.log('token is generated')
             res.cookie('token', token)
-            Account.accounts.push(req.body)
             console.log('token:', token)
         } catch(e) {
             console.log(e)
@@ -93,13 +92,30 @@ export class Account {
                 Equipo: {
                     create: {
                         NombreEquipo: req.body["teamname"],
-                        Puntuacion: 0
+                        Puntuacion: 0,
+                        Alineacion : {
+                            create : {
+                                posgk : 0,
+                                pos1: 0,
+                                pos2: 0,
+                                pos3: 0,
+                                pos4: 0,
+                                pos5: 0,
+                                pos6: 0
+                            }
+                        },
+                        Banca: {
+                            create: {
+                                pos1: 0,
+                                pos2: 0
+                            }
+                        }
                     }
                 }
             }
         })
     
-        return user
+        return res.json(user)
 
     }
 }

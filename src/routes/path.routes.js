@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { AdminRouter } from "./admin.routes.js";
 import mainController from "../controllers/main.controller.js";
+import { loginSchema, registerSchema } from "../schemas/auth.schema.js";
+
 
 export const APIrouter = Router()
 async function log(req) {
@@ -44,6 +46,6 @@ APIrouter.patch(["/equipo/:nombreEquipo"], mainController.database.entities.team
 
 APIrouter.post(["/stat", "/stat/:nombreJugador"], mainController.database.entities.stat.handleStat) // crea stats de un jugador
 
-APIrouter.get(["/jugador", "/jugador/:name"], mainController.database.entities.player.getPlayer) // leer un jugador o editarlo
+APIrouter.get(["/jugador", "/jugador/:name"], mainController.database.entities.player.getPlayers) // leer un jugador o editarlo
 APIrouter.patch(["/jugador/:name"], mainController.database.entities.player.updatePlayer) // leer un jugador o editarlo
 
