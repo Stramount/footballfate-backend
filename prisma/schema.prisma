@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {
@@ -14,10 +15,10 @@ model Equipo {
   ID_Usuario   Int
   Alineacion   Alineacion[]
   Banca        Banca[]
-  Usuario      Usuario        @relation(fields: [ID_Usuario], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "Equipo_ibfk_1")
+  Usuario      Usuario        @relation(fields: [ID_Usuario], references: [ID], onDelete: Cascade, onUpdate: Restrict, map: "Equipo_ibfk_1")
   Equipo_Fecha Equipo_Fecha[]
 
-  @@index([ID_Usuario], map: "ID_Usuario")
+  @@index([ID_Usuario], map: "Equipo_ibfk_1")
 }
 
 model Usuario {
@@ -69,11 +70,19 @@ model Equipo_Fecha {
 }
 
 model Estadistica {
-  ID         Int     @id @default(autoincrement())
-  ID_Fecha   Int
-  ID_Jugador Int
-  Fecha      Fecha   @relation(fields: [ID_Fecha], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Estadistica_ibfk_1")
-  Jugador    Jugador @relation(fields: [ID_Jugador], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Estadistica_ibfk_2")
+  ID              Int     @id @default(autoincrement())
+  ID_Fecha        Int
+  ID_Jugador      Int
+  goles           Int
+  asistencias     Int
+  intercepciones  Int
+  atajadas        Int
+  penalesErrados  Int
+  penalesAtajados Int
+  asistioAClase   Boolean
+  puntos          Int
+  Fecha           Fecha   @relation(fields: [ID_Fecha], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Estadistica_ibfk_1")
+  Jugador         Jugador @relation(fields: [ID_Jugador], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Estadistica_ibfk_2")
 
   @@index([ID_Fecha], map: "ID_Fecha")
   @@index([ID_Jugador], map: "ID_Jugador")

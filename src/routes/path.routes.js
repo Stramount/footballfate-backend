@@ -41,5 +41,9 @@ APIrouter.delete(["/cuenta/:id"], mainController.database.entities.account.delet
 APIrouter.get(["/equipo", "/equipo/:nombreEquipo"], mainController.database.entities.team.getTeam) // leer un equipo
 APIrouter.patch(["/equipo/:nombreEquipo"], mainController.database.entities.team.updateTeam) // editar un equipo
 
+
+APIrouter.post(["/stat", "/stat/:nombreJugador"], mainController.database.entities.stat.handleStat) // crea stats de un jugador
+
 APIrouter.get(["/jugador", "/jugador/:name"], mainController.database.entities.player.getPlayer) // leer un jugador o editarlo
 APIrouter.patch(["/jugador/:name"], mainController.database.entities.player.updatePlayer) // leer un jugador o editarlo
+

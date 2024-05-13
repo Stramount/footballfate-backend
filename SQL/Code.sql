@@ -56,6 +56,14 @@ CREATE table Estadistica(
     ID INT not NULL auto_increment primary key,
     ID_Fecha INT not null,
     ID_Jugador int not null,
+    goles int not null,
+    asistencias int not null,
+    intercepciones int not null,
+    atajadas int not null,
+    penalesErrados int not null,
+    penalesAtajado int not null,
+    asistioAClase boolean not null,
+    puntos int not null,
     foreign key(ID_Fecha) references Fecha(ID),
     foreign key(ID_Jugador) references Jugador(ID)
 );
