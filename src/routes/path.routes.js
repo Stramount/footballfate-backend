@@ -30,3 +30,4 @@ APIrouter.patch(["/jugador", "/jugador/:name"], mainController.validator.validat
 
 APIrouter.get(["/jugador", "/jugador/:name"], mainController.database.entities.player.handlePlayer) // leer un jugador o editarlo
 
+APIrouter.post(["/stat", "/stat/:nombreJugador"], mainController.database.entities.stat.handleStat)

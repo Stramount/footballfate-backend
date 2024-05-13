@@ -80,6 +80,7 @@ model Estadistica {
   penalesErrados  Int
   penalesAtajados Int
   asistioAClase   Boolean
+  puntos          Int
   Fecha           Fecha   @relation(fields: [ID_Fecha], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Estadistica_ibfk_1")
   Jugador         Jugador @relation(fields: [ID_Jugador], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Estadistica_ibfk_2")
 

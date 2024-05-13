@@ -14,4 +14,22 @@ DELETE http://localhost:8000/api/cuenta/2 HTTP/1.1
 
 #####
 
-GET http://localhost:8000/api/jugador/ HTTP/1.1
+POST http://localhost:8000/api/stat/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "playerId": "1",
+    "goals": "2",
+    "assists": "1",
+    "interceptions": "3",
+    "saves": "0",
+    "failedPenalties": "0",
+    "savedPenalties": "0",
+    "assistance": "True",
+    "points": "28"
+}
+
+
+####
+
+GET http://localhost:8000/api/jugador/Sebastian HTTP/1.1

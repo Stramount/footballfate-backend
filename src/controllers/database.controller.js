@@ -1,5 +1,5 @@
 // Importar cliente prisma
-import { User, Account, Team, Player } from '../../prisma/entities.database.js'
+import { User, Account, Team, Player, Stat } from '../../prisma/entities.database.js'
 
 export default class Database{
     constructor(){
@@ -7,7 +7,8 @@ export default class Database{
             user: User,
             account: Account,
             team: Team,
-            player: Player
+            player: Player,
+            stat: Stat
         }
     }
 }

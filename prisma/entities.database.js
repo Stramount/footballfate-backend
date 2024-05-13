@@ -244,7 +244,18 @@ export class Player {
                     }
                 },
             include : {
-                Estadistica : true
+                Estadistica: {
+                    select : {
+                        goles : true,
+                        asistencias : true,
+                        intercepciones : true,
+                        atajadas : true,
+                        penalesErrados : true,
+                        penalesAtajados : true,
+                        asistioAClase : true,
+                        puntos : true
+                    }
+                }
             }   
             })
 
@@ -265,18 +276,28 @@ export class Player {
 export class Stat {
 
 
+    static async handleStat(req, res, next) {
+        
+        await log(req)
+        
+        if (req.method == "POST") res.send(await Stat.createStat(req, res, next))
+    }
+
+
     static async createStat(req, res, next) {
+        let helper = await prisma.fecha.findFirst({ select : {ID : true}, orderBy : { ID : 'desc'}})
         const newStat = await prisma.estadistica.create({
             data: {
-                ID_Fecha : await prisma.fecha.findFirst({ orderBy : { ID : 'desc'}}),
-                ID_Jugador : req.body.playerId,
+                ID_Fecha : helper['ID'],
+                ID_Jugador : parseInt(req.body.playerId),
                 goles : parseInt(req.body.goals),
                 asistencias : parseInt(req.body.assists),
                 intercepciones : parseInt(req.body.interceptions),
                 atajadas : parseInt(req.body.saves),
                 penalesErrados : parseInt(req.body.failedPenalties),
                 penalesAtajados : parseInt(req.body.savedPenalties),
-                asistioAClase : parse(req.body.attendance)
+                asistioAClase : Boolean(req.body.assistance),
+                puntos : parseInt(req.body.points)
             }
         })
         return newStat
