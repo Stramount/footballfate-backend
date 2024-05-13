@@ -27,7 +27,10 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm test
-    - name: Upload coverage reports to Codecov
+    - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v4.0.1
       with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+        flags: smart-tests
+        verbose: true
+      env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
