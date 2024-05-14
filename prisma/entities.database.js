@@ -132,21 +132,42 @@ export class Team {
     }
 
     static async transferPlayer (body , id) {
-        const updateAlineacion = await prisma.jugadorAlineacion.update({
+        const updateAlineacion = await prisma.jugador_Alineacion.update({
             where : {
-                ID_Equipo : id
+                Alineacion : {
+                    is : { ID_Equipo : id}
+                }
             },
             data : {
-                posgk : body.posgk,
-                pos1 : body.pos1,
-                pos2 : body.pos2,
-                pos3 : body.pos3,
-                pos4 : body.pos4,
-                pos5 : body.pos5,
-                pos6 : body.pos6
+                Alineacion : {
+                    update : {
+                        posgk : body.Alineacion.posgk,
+                        pos1 : body.Alineacion.pos1,
+                        pos2 : body.Alineacion.pos2,
+                        pos3 : body.Alineacion.pos3,
+                        pos4 : body.Alineacion.pos4,
+                        pos5 : body.Alineacion.pos5,
+                        pos6 : body.Alineacion.pos6
+                    }
+                }
             }
         })
-        return res.send(updateAlineacion)
+        const updateBanca = await prisma.jugador_Banca.update({
+            where : {
+                Banca : {
+                    is : { ID_Equipo : id}
+                }
+            },
+            data : {
+                Banca : {
+                    update : {
+                        pos1 : body.Banca.pos1,
+                        pos2 : body.Banca.pos2
+                    }
+                }
+            }
+        })
+        return res.send(updateAlineacion, updateBanca)
     }
 
     static async updateTeam(req , res , next){
