@@ -16,7 +16,8 @@ export class Account {
                 ID : parseInt(req.params.id)
             }
         })
-        return "Se borro xD"
+
+        return res.status(200).send("Usuario eliminado")
     }
 
     static async getAccount(req , res , next){
@@ -26,7 +27,7 @@ export class Account {
             }
         })
         
-        return user
+        return res.json(user)
     }
 
     static async UpdateAccount(req , res , next){
@@ -52,7 +53,7 @@ export class Account {
             }
         })
 
-        return user
+        return res.json(user)
     }
 
     static async login(req , res , next){
@@ -64,10 +65,11 @@ export class Account {
                 Contrase_a: password
             }
         })
-        if (!user) {res.status(404) ; return "no hay na"}
+        if (!user) {res.status(404) ; return res.send("Usuario no encontrado")}
 
         res.cookie('token', token)
-        return user
+
+        return res.json(user)
     }
 
     static async register(req , res , next){
@@ -126,27 +128,41 @@ export class Team {
     static async getTeam(req , res , next){
         // obtener el equipo que se pasa por ID
         // Realizar un ordenamiento de la alineacion para enviar al front
-        return "un equipo"
+        return res.send("equipo")
     }
 
-    static async transferPlayer (body) {
-        // recibir del body y utilizar sus propiedades para hacer update
-        return "recibido"
+    static async transferPlayer (body , id) {
+        const updateAlineacion = await prisma.jugadorAlineacion.update({
+            where : {
+                ID_Equipo : id
+            },
+            data : {
+                posgk : body.posgk,
+                pos1 : body.pos1,
+                pos2 : body.pos2,
+                pos3 : body.pos3,
+                pos4 : body.pos4,
+                pos5 : body.pos5,
+                pos6 : body.pos6
+            }
+        })
+        return res.send(updateAlineacion)
     }
 
     static async updateTeam(req , res , next){
         if (req.headers.transfer){
-            return await Team.transferPlayer(req.body)
+            return await Team.transferPlayer(req.body , req.params.id)
         }
 
         //editar tabla equipo
         //nombre o puntuacion
+        return res.send("editado")
     }
 
     static async createTeam (req , res , next){
         // crea un equipo, lo asocia al usuario del param
         // y lo asocia a la ultima fecha creada
-        return "recibido"
+        return res.send(req.body.msg)
     }
 }
 
@@ -188,7 +204,7 @@ export class Player {
               }   
         })
 
-        return players
+        return res.json(players)
         
     }
 }
@@ -212,6 +228,6 @@ export class Stat {
                 puntos : parseInt(req.body.points)
             }
         })
-        return newStat
+        return res.json(newStat)
     }
 }

@@ -31,27 +31,29 @@ GET http://localhost:8000/api/jugador/Sebastian HTTP/1.1
 
 ####
 
-PATCH http://localhost:8000/api/equipo/1 HTTP/1.1
+PATCH http://localhost:3000/api/equipo/1 HTTP/1.1
 transfer: 1
+Content-Type: application/json
 
 {
-    Alineacion : {
-        posgk : 0,
-        pos1: 0,
-        pos2: 0,
-        pos3: 0,
-        pos4: 0,
-        pos5: 0,
-        pos6: 0
+    "Alineacion" : {
+        "posgk" : 0,
+        "pos1": 0,
+        "pos2": 0,
+        "pos3": 0,
+        "pos4": 0,
+        "pos5": 0,
+        "pos6": 0
     },
-    Banca: {
-        pos1: 0,
-        pos2: 0
+    "Banca": {
+        "pos1" : 0,
+        "pos2" : 0
     }
 }
 
 ####
-POST http://localhost:8000/api/cuenta/1/nuevo_equipo HTTP/1.1
+POST http://localhost:3000/api/equipo HTTP/1.1
+Content-Type: application/json
 
 {
     "msg" : "hola"
