@@ -147,10 +147,11 @@ export class Team {
         return res.send("editado")
     }
 
-    static async createTeam (req , res , next){
-        // crea un equipo, lo asocia al usuario del param
+    static async createTeam (req , res , next){ // se usa para cuando hacemos la nueva semana
+        // crea una copia del equipo
         // y lo asocia a la ultima fecha creada
-        return res.send(req.body.msg)
+        // se reinician los puntos a 0
+        return res.send("Equipos Creados")
     }
 }
 
