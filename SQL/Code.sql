@@ -31,27 +31,6 @@ create table Equipo(
     foreign key(ID_Usuario) references Usuario(ID)
 );
 
-CREATE table Alineacion(
-    ID INT NOT NULL auto_increment primary key,
-    ID_Equipo INT NOT NULL,
-    posgk int not null,
-    pos1 int not null,
-    pos2 int not null,
-    pos3 int not null,
-    pos4 int not null,
-    pos5 int not null,
-    pos6 int not null,
-    FOREIGN KEY(ID_Equipo) REFERENCES Equipo(ID)
-);
-
-CREATE table Banca(
-    ID INT NOT NULL auto_increment primary key,
-    ID_Equipo INT NOT NULL,
-	pos1 int not null,
-    pos2 int not NULL,
-	 FOREIGN KEY(ID_Equipo) REFERENCES Equipo(ID)
-);
-
 CREATE table Estadistica(
     ID INT not NULL auto_increment primary key,
     ID_Fecha INT not null,
@@ -76,18 +55,11 @@ CREATE table Equipo_Fecha(
     foreign key(ID_Fecha) references Fecha(ID)
 );
 
-create table Jugador_Alineacion(
-    ID_Alineacion int not null,
-    ID_Jugador int not NULL,
-    primary key(ID_Alineacion, ID_Jugador),
-    foreign key(ID_Alineacion) references Alineacion(ID),
-    foreign key(ID_Jugador) references Jugador(ID)
-);
-
-create table Jugador_Banca(
-    ID_Banca int not null,
-    ID_Jugador int not NULL,
-    primary key(ID_Banca, ID_Jugador),
-    foreign key(ID_Banca) references Banca(ID),
+CREATE TABLE Equipo_Jugador(
+    ID_Equipo INT NOT NULL,
+    ID_Jugador INT NOT NULL,
+    position INT null, /*banca -1 y 0    PT: 1  DEF: 2 3 4  MC: 5 6 7  DC 8 9*/
+    primary key(ID_Equipo, ID_Jugador),
+    foreign key(ID_Equipo) references Equipo(ID),
     foreign key(ID_Jugador) references Jugador(ID)
 );
