@@ -36,9 +36,45 @@ transfer: 1
 Content-Type: application/json
 
 {
-    "jugador" : 1,
-    "pos" : 1,
-    "presupuesto" : 95.5
+    "presupuesto" : 95.5,
+    
+    "in" : {
+        "1" : 32
+    },
+
+    "out" : {
+        "1" : 3
+    }
+
+}
+
+PATCH http://localhost:3000/api/equipo/1 HTTP/1.1
+transfer: 0
+Content-Type: application/json
+
+{
+    "Alineacion" : {
+        "del" : {
+            "1" : {}
+        },
+
+        "mc" : {
+            "1" : {},
+            "2" : {},
+            "3" : {}
+        },
+
+        "def" : {
+            "1" : {},
+            "2" : {}
+        },
+
+        "pt" : {}
+    },
+    "Banca": {
+        "1" : {},
+        "2" : {}
+    }
 }
 
 ####

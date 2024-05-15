@@ -26,7 +26,8 @@ CREATE table Jugador(
 create table Equipo(
 	ID INT not null auto_increment primary key,
     NombreEquipo varchar(75) not null,
-	Puntuacion int(4) not null,
+	puntuacion int(4) not null,
+  	alineacion JSON not null,
     ID_Usuario int not null,
     foreign key(ID_Usuario) references Usuario(ID)
 );
@@ -58,7 +59,6 @@ CREATE table Equipo_Fecha(
 CREATE TABLE Equipo_Jugador(
     ID_Equipo INT NOT NULL,
     ID_Jugador INT NOT NULL,
-    position INT null, /*banca -1 y 0    PT: 1  DEF: 2 3 4  MC: 5 6 7  DC 8 9*/
     primary key(ID_Equipo, ID_Jugador),
     foreign key(ID_Equipo) references Equipo(ID),
     foreign key(ID_Jugador) references Jugador(ID)
