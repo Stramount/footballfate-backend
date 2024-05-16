@@ -137,44 +137,62 @@ export class Team {
     }
 
     static async transferPlayer (body , id) {
-        
-        const transferencia = await prisma.equipo_Jugador.update({
-            where : {
-                ID : id
-            },
-            data : {
-                Equipo : {
-                    update : {
-                        Usuario : {
-                            update : {
-                                Presupuesto : body.presupuesto
-                            }
-                        }
-                    }
-                },
-                
-            }
-        })
+        let aux = []
 
-        return res.send("jugador transferido")
+        if (!body.out?.["1"]){
+            return await Team.buyPlayer(body, id)
+        }
+
+        for(id_jug = 0 ; id_jug < body.out.length ; id_jug ++){
+            aux.push(prisma.equipo_Jugador.update({
+                where : {
+                    ID_Equipo_ID_Jugador : {
+                        ID_Equipo : id,
+                        ID_Jugador : body.out[`${id_jug}`]
+                    },
+                },
+                data : {
+                    ID_Jugador : body.in[`${id_jug}`],
+                    Equipo : {
+                        update : {
+                            Usuario : {
+                                update : {
+                                    Presupuesto : body.presupuesto
+                                    }
+                                }
+                            }
+                        },
+                    }
+                })
+            )
+        }
+        Promise.all(aux)
+
+        return "jugador transferido"
     
     }
 
+    static async buyPlayer (body, id) {
+        return "Jugador comprado"
+    }
+
+
     static async updateTeam(req , res , next){
         if (req.headers.transfer){
-            return await Team.transferPlayer(req.body , req.params.id)
+            return res.send(await Team.transferPlayer(req.body , req.params.id))
         }
+
         const newTeam = await prisma.equipo.update({
             where : {
                 ID : req.params.id
             },
             data : {
                 NombreEquipo : req.body.teamname??Team.getTeam(req)["NombreEquipo"],
-                Puntuacion : 0
+                Alineacion : req.body.lineup
             }
         })
         //editar tabla equipo
-        //nombre o puntuacion
+        //nombre o alineacion
         return res.send(newTeam)
     }
 
