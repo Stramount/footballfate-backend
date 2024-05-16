@@ -9,14 +9,13 @@ datasource db {
 }
 
 model Equipo {
-  ID           Int            @id @default(autoincrement())
-  NombreEquipo String         @db.VarChar(75)
-  Puntuacion   Int
-  ID_Usuario   Int
-  Alineacion   Alineacion[]
-  Banca        Banca[]
-  Usuario      Usuario        @relation(fields: [ID_Usuario], references: [ID], onDelete: Cascade, onUpdate: Restrict, map: "Equipo_ibfk_1")
-  Equipo_Fecha Equipo_Fecha[]
+  ID             Int              @id @default(autoincrement())
+  NombreEquipo   String           @db.VarChar(75)
+  Puntuacion     Int
+  ID_Usuario     Int
+  Usuario        Usuario          @relation(fields: [ID_Usuario], references: [ID], onDelete: Cascade, onUpdate: Restrict, map: "Equipo_ibfk_1")
+  Equipo_Fecha   Equipo_Fecha[]
+  Equipo_Jugador Equipo_Jugador[]
 
   @@index([ID_Usuario], map: "Equipo_ibfk_1")
 }
@@ -30,33 +29,6 @@ model Usuario {
   Transferencias Int?
   Wildcard       Boolean?
   Equipo         Equipo[]
-}
-
-model Alineacion {
-  ID                 Int                  @id @default(autoincrement())
-  ID_Equipo          Int
-  posgk              Int
-  pos1               Int
-  pos2               Int
-  pos3               Int
-  pos4               Int
-  pos5               Int
-  pos6               Int
-  Equipo             Equipo               @relation(fields: [ID_Equipo], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Alineacion_ibfk_1")
-  Jugador_Alineacion Jugador_Alineacion[]
-
-  @@index([ID_Equipo], map: "ID_Equipo")
-}
-
-model Banca {
-  ID            Int             @id @default(autoincrement())
-  ID_Equipo     Int
-  pos1          Int
-  pos2          Int
-  Equipo        Equipo          @relation(fields: [ID_Equipo], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Banca_ibfk_1")
-  Jugador_Banca Jugador_Banca[]
-
-  @@index([ID_Equipo], map: "ID_Equipo")
 }
 
 model Equipo_Fecha {
@@ -96,32 +68,22 @@ model Fecha {
 }
 
 model Jugador {
-  ID                 Int                  @id @default(autoincrement())
-  nombre             String               @db.Char(15)
-  apellido           String               @db.Char(20)
-  categoria          String               @db.Char(3)
-  precio             Float                @db.Float
-  Estadistica        Estadistica[]
-  Jugador_Alineacion Jugador_Alineacion[]
-  Jugador_Banca      Jugador_Banca[]
+  ID             Int              @id @default(autoincrement())
+  nombre         String           @db.Char(15)
+  apellido       String           @db.Char(20)
+  categoria      String           @db.Char(3)
+  precio         Float            @db.Float
+  Equipo_Jugador Equipo_Jugador[]
+  Estadistica    Estadistica[]
 }
 
-model Jugador_Alineacion {
-  ID_Alineacion Int
-  ID_Jugador    Int
-  Alineacion    Alineacion @relation(fields: [ID_Alineacion], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Jugador_Alineacion_ibfk_1")
-  Jugador       Jugador    @relation(fields: [ID_Jugador], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Jugador_Alineacion_ibfk_2")
-
-  @@id([ID_Alineacion, ID_Jugador])
-  @@index([ID_Jugador], map: "ID_Jugador")
-}
-
-model Jugador_Banca {
-  ID_Banca   Int
+model Equipo_Jugador {
+  ID_Equipo  Int
   ID_Jugador Int
-  Alineacion Banca   @relation(fields: [ID_Banca], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Jugador_Banca_ibfk_1")
-  Jugador    Jugador @relation(fields: [ID_Jugador], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Jugador_Banca_ibfk_2")
+  position   Int
+  Equipo     Equipo  @relation(fields: [ID_Equipo], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Equipo_Jugador_ibfk_1")
+  Jugador    Jugador @relation(fields: [ID_Jugador], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Equipo_Jugador_ibfk_2")
 
-  @@id([ID_Banca, ID_Jugador])
+  @@id([ID_Equipo, ID_Jugador])
   @@index([ID_Jugador], map: "ID_Jugador")
 }

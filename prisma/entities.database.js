@@ -126,13 +126,36 @@ export class Team {
     static prisma = PRISMA
 
     static async getTeam(req , res , next){
+        const team = await prisma.equipo.findFirst({
+            where : {
+                ID : req.params.id
+            }
+        })
         // obtener el equipo que se pasa por ID
         // Realizar un ordenamiento de la alineacion para enviar al front
-        return res.send("equipo")
+        return res.send(team)
     }
 
     static async transferPlayer (body , id) {
-    
+        
+        const transferencia = await prisma.equipo_Jugador.update({
+            where : {
+                ID : id
+            },
+            data : {
+                Equipo : {
+                    update : {
+                        Usuario : {
+                            update : {
+                                Presupuesto : body.presupuesto
+                            }
+                        }
+                    }
+                },
+                
+            }
+        })
+
         return res.send("jugador transferido")
     
     }
@@ -141,10 +164,18 @@ export class Team {
         if (req.headers.transfer){
             return await Team.transferPlayer(req.body , req.params.id)
         }
-
+        const newTeam = await prisma.equipo.update({
+            where : {
+                ID : req.params.id
+            },
+            data : {
+                NombreEquipo : req.body.teamname??Team.getTeam(req)["NombreEquipo"],
+                Puntuacion : 0
+            }
+        })
         //editar tabla equipo
         //nombre o puntuacion
-        return res.send("editado")
+        return res.send(newTeam)
     }
 
     static async createTeam (req , res , next){ // se usa para cuando hacemos la nueva semana
