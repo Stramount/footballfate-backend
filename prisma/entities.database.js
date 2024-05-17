@@ -10,27 +10,27 @@ const PRISMA = new PrismaClient()
 export class Account {
     static prisma = PRISMA
 
-    static async deleteAccount(req, res, next){
+    static async deleteAccount(req, res, next) {
         await prisma.usuario.delete({
             where: {
-                ID : parseInt(req.params.id)
+                ID: parseInt(req.params.id)
             }
         })
 
         return res.status(200).send("Usuario eliminado")
     }
 
-    static async getAccount(req , res , next){
+    static async getAccount(req, res, next) {
         const user = await prisma.usuario.findFirst({
-            where : {
-                ID : req.body.id
+            where: {
+                ID: req.body.id
             }
         })
-        
+
         return res.json(user)
     }
 
-    static async UpdateAccount(req , res , next){
+    static async UpdateAccount(req, res, next) {
         const id = parseInt(req.params.id)
         const user = await prisma.usuario.update({
             where: {
@@ -56,7 +56,7 @@ export class Account {
         return res.json(user)
     }
 
-    static async login(req , res , next){
+    static async login(req, res, next) {
         const token = await Validator.createToken({ email: req.body.email })
         let { email, password } = req.body
         const user = await prisma.usuario.findFirst({
@@ -65,24 +65,24 @@ export class Account {
                 Contrase_a: password
             }
         })
-        if (!user) {res.status(404) ; return res.send("Usuario no encontrado")}
+        if (!user) { res.status(404); return res.send("Usuario no encontrado") }
 
         res.cookie('token', token)
 
         return res.json(user)
     }
 
-    static async register(req , res , next){
+    static async register(req, res, next) {
         try {
-            const token = await Validator.createToken({ email: req.body.email})
+            const token = await Validator.createToken({ email: req.body.email })
             console.log('token is generated')
             res.cookie('token', token)
             console.log('token:', token)
-        } catch(e) {
+        } catch (e) {
             console.log(e)
             console.log('Hay un error')
         }
-        
+
         const user = await prisma.usuario.create({
             data: {
                 Nickname: req.body["username"],
@@ -95,9 +95,9 @@ export class Account {
                     create: {
                         NombreEquipo: req.body["teamname"],
                         Puntuacion: 0,
-                        Alineacion : {
-                            create : {
-                                posgk : 0,
+                        Alineacion: {
+                            create: {
+                                posgk: 0,
                                 pos1: 0,
                                 pos2: 0,
                                 pos3: 0,
@@ -116,7 +116,7 @@ export class Account {
                 }
             }
         })
-    
+
         return res.json(user)
 
     }
@@ -125,30 +125,66 @@ export class Account {
 export class Team {
     static prisma = PRISMA
 
-    static async getTeam(req , res , next){
-        const team = await prisma.equipo.findFirst({
-            where : {
-                ID : req.params.id
+    static async getTeam(req, res, next) {
+        const aux = await prisma.equipo.findUnique({
+            where: {
+                ID: req.params.id
+            },
+            select : {
+                alineacion : true,
             }
         })
+        const team = []
+        for (i = 0 ; i < aux.alineacion.length ; i ++){
+            team.push(prisma.equipo)
+        }
         // obtener el equipo que se pasa por ID
         // Realizar un ordenamiento de la alineacion para enviar al front
         return res.send(team)
     }
 
-    static async transferPlayer (body , id) {
-        let aux = []
-
-        if (!body.out?.["1"]){
+    static async transferPlayer(body, id) {
+        if (!body.out?.["1"]) {
             return await Team.buyPlayer(body, id)
         }
+        let aux = []
+        for (id_jug = 0; id_jug < body.out.length; id_jug++) {
+            aux.push(prisma.equipo_Jugador.update({
+                where: {
+                    ID_Equipo_ID_Jugador: {
+                        ID_Equipo: id,
+                        ID_Jugador: body.out[`${id_jug}`]
+                    },
+                },
+                data: {
+                    ID_Jugador: body.in[`${id_jug}`],
+                    Equipo: {
+                        update: {
+                            Usuario: {
+                                update: {
+                                    Presupuesto: body.presupuesto
+                                }
+                            }
+                        }
+                    },
+                }
+            })
+            )
+        }
+        Promise.all(aux)
 
-        for(id_jug = 0 ; id_jug < body.out.length ; id_jug ++){
+        return "jugador transferido"
+
+    }
+
+    static async buyPlayer(body, id) {
+        let aux = []
+        for (id_jug = 0; id_jug < body.in.length; id_jug++){
             aux.push(prisma.equipo_Jugador.update({
                 where : {
                     ID_Equipo_ID_Jugador : {
                         ID_Equipo : id,
-                        ID_Jugador : body.out[`${id_jug}`]
+                        ID_Jugador : body.in[`${id_jug}`]
                     },
                 },
                 data : {
@@ -158,37 +194,30 @@ export class Team {
                             Usuario : {
                                 update : {
                                     Presupuesto : body.presupuesto
-                                    }
                                 }
                             }
-                        },
+                        }
                     }
-                })
-            )
+                }
+            }))
         }
         Promise.all(aux)
-
-        return "jugador transferido"
-    
-    }
-
-    static async buyPlayer (body, id) {
         return "Jugador comprado"
     }
 
 
-    static async updateTeam(req , res , next){
-        if (req.headers.transfer){
-            return res.send(await Team.transferPlayer(req.body , req.params.id))
+    static async updateTeam(req, res, next) {
+        if (req.headers.transfer) {
+            return res.send(await Team.transferPlayer(req.body, req.params.id))
         }
 
         const newTeam = await prisma.equipo.update({
-            where : {
-                ID : req.params.id
+            where: {
+                ID: req.params.id
             },
-            data : {
-                NombreEquipo : req.body.teamname??Team.getTeam(req)["NombreEquipo"],
-                Alineacion : req.body.lineup
+            data: {
+                NombreEquipo: req.body.teamname ?? Team.getTeam(req)["NombreEquipo"],
+                Alineacion: req.body.lineup
             }
         })
         //editar tabla equipo
@@ -196,7 +225,7 @@ export class Team {
         return res.send(newTeam)
     }
 
-    static async createTeam (req , res , next){ // se usa para cuando hacemos la nueva semana
+    static async createTeam(req, res, next) { // se usa para cuando hacemos la nueva semana
         // crea una copia del equipo
         // y lo asocia a la ultima fecha creada
         // se reinician los puntos a 0
@@ -218,32 +247,32 @@ export class Player {
         }
     }
 
-    static async getPlayers(req , res , next){
+    static async getPlayers(req, res, next) {
 
         const players = await prisma.jugador.findMany({
-            where : {
+            where: {
                 nombre: {
-                    contains : req.params.name??""
-                    }
-                },
-            include : {
+                    contains: req.params.name ?? ""
+                }
+            },
+            include: {
                 Estadistica: {
-                    select : {
-                        goles : true,
-                        asistencias : true,
-                        intercepciones : true,
-                        atajadas : true,
-                        penalesErrados : true,
-                        penalesAtajados : true,
-                        asistioAClase : true,
-                        puntos : true
-                      }
-                  }
-              }   
+                    select: {
+                        goles: true,
+                        asistencias: true,
+                        intercepciones: true,
+                        atajadas: true,
+                        penalesErrados: true,
+                        penalesAtajados: true,
+                        asistioAClase: true,
+                        puntos: true
+                    }
+                }
+            }
         })
 
         return res.json(players)
-        
+
     }
 }
 
@@ -251,19 +280,19 @@ export class Player {
 export class Stat {
 
     static async createStat(req, res, next) {
-        let helper = await prisma.fecha.findFirst({ select : {ID : true}, orderBy : { ID : 'desc'}})
+        let helper = await prisma.fecha.findFirst({ select: { ID: true }, orderBy: { ID: 'desc' } })
         const newStat = await prisma.estadistica.create({
             data: {
-                ID_Fecha : helper['ID'],
-                ID_Jugador : parseInt(req.body.playerId),
-                goles : parseInt(req.body.goals),
-                asistencias : parseInt(req.body.assists),
-                intercepciones : parseInt(req.body.interceptions),
-                atajadas : parseInt(req.body.saves),
-                penalesErrados : parseInt(req.body.failedPenalties),
-                penalesAtajados : parseInt(req.body.savedPenalties),
-                asistioAClase : Boolean(req.body.assistance),
-                puntos : parseInt(req.body.points)
+                ID_Fecha: helper['ID'],
+                ID_Jugador: parseInt(req.body.playerId),
+                goles: parseInt(req.body.goals),
+                asistencias: parseInt(req.body.assists),
+                intercepciones: parseInt(req.body.interceptions),
+                atajadas: parseInt(req.body.saves),
+                penalesErrados: parseInt(req.body.failedPenalties),
+                penalesAtajados: parseInt(req.body.savedPenalties),
+                asistioAClase: Boolean(req.body.assistance),
+                puntos: parseInt(req.body.points)
             }
         })
         return res.json(newStat)
