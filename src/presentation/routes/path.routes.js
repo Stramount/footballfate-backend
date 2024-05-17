@@ -31,9 +31,9 @@ APIrouter.use("/" , (req , res, next) => {
 
 APIrouter.get("/", (req , res) => res.send("hi")) // bienvenida a la API
 
-APIrouter.post("/auth/login", mainController.database.entities.account.loginC) // router para login (POST)
-APIrouter.post("/auth/register", mainController.database.entities.account.registerC) // router para registro (POST)
-APIrouter.post("/auth/players", mainController.database.entities.account.postPlayers) // router para registro (POST)
+APIrouter.post("/auth/login", mainController.database.entities.account.login) // router para login (POST)
+APIrouter.post("/auth/register", mainController.database.entities.account.register) // router para registro (POST)
+
 APIrouter.get("/auth/players", mainController.database.entities.account.getPlayers) // router para registro (POST)
 
 // APIrouter.use(mainController.validator.validationToken)
