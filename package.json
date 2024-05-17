@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "node ./src/interface/index.js",
+    "dev": "nodemon ./src/interface/index.js",
     "test": "node --test ./fetch.test.js"
   },
   "repository": {
@@ -33,6 +33,7 @@
     "zod": "^3.23.6"
   },
   "devDependencies": {
+    "nodemon": "^3.1.0",
     "prisma": "^5.14.0"
   }
 }
