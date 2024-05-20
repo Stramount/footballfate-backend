@@ -153,31 +153,8 @@ export class Team {
     if (!body.out?.["1"]) {
       return await Team.buyPlayer(body, id)
     }
-    let aux = []
-    for (id_jug = 0; id_jug < body.out.length; id_jug++) {
-      aux.push(prisma.equipo_Jugador.update({
-        where: {
-          ID_Equipo_ID_Jugador: {
-            ID_Equipo: id,
-            ID_Jugador: body.out[`${id_jug}`]
-          },
-        },
-        data: {
-          ID_Jugador: body.in[`${id_jug}`],
-          Equipo: {
-            update: {
-              Usuario: {
-                update: {
-                  Presupuesto: body.presupuesto
-                }
-              }
-            }
-          },
-        }
-      })
-      )
-    }
-    Promise.all(aux)
+
+    
 
     return "jugador transferido"
 
