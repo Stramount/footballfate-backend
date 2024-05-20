@@ -21,9 +21,32 @@ export class Account {
     }
 
     static async getAccount(req, res, next) {
+
+        if (!req.params.id){
+            const query_id = parseInt(await prisma.$queryRaw`SELECT ID FROM Fecha order by ID desc LIMIT 1;`)
+            const users = await prisma.usuario.findMany({
+                where : {
+                    Equipo : { every : { Equipo_Fecha : { every : { Fecha : { is : { ID : query_id }}}}}}
+                }
+            })
+            return res.send(users)
+        }
+
+
         const user = await prisma.usuario.findFirst({
             where: {
-                ID: req.body.id
+                ID: req.params.id
+            },
+            include : {
+                Equipo : {
+                    include : {
+                        Equipo_Fecha : {
+                            include : {
+                                Fecha : true
+                            }
+                        }
+                    }
+                }
             }
         })
 
@@ -94,24 +117,8 @@ export class Account {
                 Equipo: {
                     create: {
                         NombreEquipo: req.body["teamname"],
-                        Puntuacion: 0,
-                        Alineacion: {
-                            create: {
-                                posgk: 0,
-                                pos1: 0,
-                                pos2: 0,
-                                pos3: 0,
-                                pos4: 0,
-                                pos5: 0,
-                                pos6: 0
-                            }
-                        },
-                        Banca: {
-                            create: {
-                                pos1: 0,
-                                pos2: 0
-                            }
-                        }
+                        Puntuacion: 0
+                        // arregla esto
                     }
                 }
             }
@@ -126,98 +133,80 @@ export class Team {
     static prisma = PRISMA
 
     static async getTeam(req, res, next) {
-        const aux = await prisma.equipo.findUnique({
+
+        const query_id = await prisma.$queryRaw`SELECT ID FROM Fecha order by ID desc LIMIT 1;`
+
+        if (!req.params.ID) {
+            const team = await prisma.equipo.findMany({
+                include : {
+                    Equipo_Fecha: 
+                    {
+                        where : {
+                            ID_Fecha : query_id
+                        }
+                    },
+                    Equipo_Jugador : true
+                }
+            })
+            return res.send(team)
+        }
+        const team = await prisma.equipo.findUnique({
             where: {
                 ID: req.params.id
             },
-            select : {
-                alineacion : true,
+            include : {
+                Equipo_Jugador : true
             }
         })
-        const team = []
-        for (i = 0 ; i < aux.alineacion.length ; i ++){
-            team.push(prisma.equipo)
-        }
         // obtener el equipo que se pasa por ID
         // Realizar un ordenamiento de la alineacion para enviar al front
         return res.send(team)
     }
 
-    static async transferPlayer(body, id) {
-        if (!body.out?.["1"]) {
-            return await Team.buyPlayer(body, id)
-        }
-        let aux = []
-        for (id_jug = 0; id_jug < body.out.length; id_jug++) {
-            aux.push(prisma.equipo_Jugador.update({
-                where: {
-                    ID_Equipo_ID_Jugador: {
-                        ID_Equipo: id,
-                        ID_Jugador: body.out[`${id_jug}`]
-                    },
-                },
-                data: {
-                    ID_Jugador: body.in[`${id_jug}`],
-                    Equipo: {
-                        update: {
-                            Usuario: {
-                                update: {
-                                    Presupuesto: body.presupuesto
-                                }
-                            }
-                        }
-                    },
-                }
-            })
-            )
-        }
-        Promise.all(aux)
-
-        return "jugador transferido"
-
-    }
-
-    static async buyPlayer(body, id) {
-        let aux = []
-        for (id_jug = 0; id_jug < body.in.length; id_jug++){
-            aux.push(prisma.equipo_Jugador.update({
-                where : {
-                    ID_Equipo_ID_Jugador : {
-                        ID_Equipo : id,
-                        ID_Jugador : body.in[`${id_jug}`]
-                    },
-                },
-                data : {
-                    ID_Jugador : body.in[`${id_jug}`],
-                    Equipo : {
-                        update : {
-                            Usuario : {
-                                update : {
-                                    Presupuesto : body.presupuesto
-                                }
-                            }
-                        }
-                    }
-                }
+    static async transferTeam(req) {
+        const Userid = parseInt(req.params.USERID) // recibis el id del usuario
+        const id = parseInt(req.params.ID); // recibis el id del equipo
+        const { players } = req.body; // recibis los nuevos jugadores
+      
+        // Realizar todas las operaciones en una transacción
+        await prisma.$transaction(async (prisma) => {
+          // Actualizar el presupuesto del usuario
+          await prisma.usuario.update({
+            where: { ID: Userid },
+            data: {
+              Presupuesto: req.body.presupuesto
+            }
+          });
+      
+          // Actualizar los jugadores del equipo
+          await prisma.equipo_Jugador.deleteMany({
+            where: { ID_Equipo: id }
+          });
+      
+          await prisma.equipo_Jugador.createMany({
+            data: players.map(p => ({
+              order: p.order,
+              estaEnBanca: p.estaEnBanca,
+              esCapitan: p.esCapitan,
+              ID_Equipo: id,
+              ID_Jugador: p.ID_Jugador
             }))
-        }
-        Promise.all(aux)
-        return "Jugador comprado"
-    }
+          });
+        });
+        return "ok"
+      }
 
 
     static async updateTeam(req, res, next) {
         if (req.headers.transfer) {
-            return res.send(await Team.transferPlayer(req.body, req.params.id))
+            return res.send(await Team.transferTeam(req))
         }
-
         const newTeam = await prisma.equipo.update({
             where: {
                 ID: req.params.id
             },
             data: {
-                NombreEquipo: req.body.teamname ?? Team.getTeam(req)["NombreEquipo"],
-                Alineacion: req.body.lineup
+                NombreEquipo: req.body.teamname ?? Team.getTeam(req)["NombreEquipo"]
             }
         })
         //editar tabla equipo

@@ -78,11 +78,13 @@ model Jugador {
 }
 
 model Equipo_Jugador {
-  ID_Equipo  Int
-  ID_Jugador Int
-  position   Int
-  Equipo     Equipo  @relation(fields: [ID_Equipo], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Equipo_Jugador_ibfk_1")
-  Jugador    Jugador @relation(fields: [ID_Jugador], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Equipo_Jugador_ibfk_2")
+  ID_Equipo   Int
+  ID_Jugador  Int
+  order       Int
+  estaEnBanca Boolean
+  esCapitan   Boolean
+  Equipo      Equipo  @relation(fields: [ID_Equipo], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Equipo_Jugador_ibfk_1")
+  Jugador     Jugador @relation(fields: [ID_Jugador], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Equipo_Jugador_ibfk_2")
 
   @@id([ID_Equipo, ID_Jugador])
   @@index([ID_Jugador], map: "ID_Jugador")
