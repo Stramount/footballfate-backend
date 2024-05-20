@@ -1,4 +1,4 @@
-import Validator from "../src/domain/controllers/validator.controller.js"
+import Validator from "../src/controllers/validator.controller.js"
 import { PrismaClient } from "@prisma/client"
 
 
@@ -6,7 +6,6 @@ const prisma = new PrismaClient()
 
 const PRISMA = new PrismaClient()
 
-prisma.equipo
 
 export class Account {
   static prisma = PRISMA
@@ -71,6 +70,93 @@ export class Account {
     res.cookie('token', token)
 
     return res.json(user)
+  }
+
+  static async registerC(req, res) {
+    const {
+      username: Nickname,
+      email: Mail,
+      password: Contrase_a,
+      teamname: NombreEquipo
+    } = req.body
+    try {
+      const user = await prisma.usuario.create({
+        data: {
+          Mail,
+          Nickname,
+          Contrase_a,
+          Presupuesto: 100.0,
+          Equipo: {
+            create: {
+              NombreEquipo,
+              Puntuacion: 10
+            }
+          }
+        },
+        include: {
+          Equipo: {
+            include: {
+              Equipo_Jugador: {
+                include: {
+                  Jugador: true
+                }
+              }
+            }
+          }
+        }
+      })
+      return res.json(user)
+    } catch (e) {
+      console.log(e)
+      return res.status(500)
+    }
+  }
+
+  static async loginC(req, res) {
+    const {
+      email: Mail
+    } = req.body
+    try {
+      const user = await prisma.usuario.findFirst({
+        where: {
+          Mail
+        },
+        include: {
+          Equipo: {
+            include: {
+              Equipo_Jugador: {
+                include: {
+                  Jugador: true
+                }
+              }
+            }
+          }
+        }
+      })
+      return res.json({
+        ...user,
+        Equipo: {
+          ...user.Equipo[0],
+          Equipo_Jugador: undefined,
+          Jugadores: user.Equipo[0].Equipo_Jugador.map(
+            e => ({ ...e.Jugador, order: e.order, estaEnBanca: e.estaEnBanca, esCapitan: e.esCapitan })
+          )
+        }
+      })
+    } catch (e) {
+      console.log(e)
+      return res.status(500)
+    }
+  }
+
+  static async postPlayers(req, res) {
+    const {
+      players: p
+    } = req.body
+    const players = await prisma.jugador.createMany({
+      data: p
+    })
+    return res.json(players)
   }
 
   static async getPlayers(req, res) {

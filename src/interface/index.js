@@ -1,8 +1,7 @@
 import { app , sentry , express_ } from "./app.js";
-import {APIrouter} from "./routes/path.routes.js"
+import {APIrouter} from "../routes/path.routes.js"
 import cookieParse from 'cookie-parser'
 import dotenv from 'dotenv'
-import userRoute from "./routes/user.routes.js"
 
 dotenv.config()
 
@@ -31,7 +30,6 @@ console.log("sentry activo")
 app.use(cookieParse())
 app.use(express_.json())
 app.use("/api" , APIrouter)
-app.use("/user", userRoute)
 /*
 // The error handler must be registered before any other error middleware and after all controllers
 app.use(sentry.Handlers.errorHandler());
