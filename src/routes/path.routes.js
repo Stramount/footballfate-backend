@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { AdminRouter } from "./admin.routes.js";
 import mainController from "../controllers/main.controller.js";
-// import { loginSchema, registerSchema } from "../schemas/auth.schema.js";
+import { loginSchema, registerSchema } from "../schemas/auth.schema.js";
 
 
 export const APIrouter = Router()
@@ -25,18 +25,16 @@ APIrouter.use("/admin" , AdminRouter)
 
 APIrouter.use("/" , (req , res, next) => {
     console.log("middleware")
-    // log(req)
+    log(req)
     next()
 })
 
 APIrouter.get("/", (req , res) => res.send("hi")) // bienvenida a la API
 
-APIrouter.post("/auth/login", mainController.database.entities.account.loginC) // router para login (POST)
-APIrouter.post("/auth/register", mainController.database.entities.account.registerC) // router para registro (POST)
-APIrouter.post("/auth/players", mainController.database.entities.account.postPlayers) // router para registro (POST)
-APIrouter.get("/auth/players", mainController.database.entities.account.getPlayers) // router para registro (POST)
+APIrouter.post("/auth/login", mainController.validator.validateSchema(loginSchema), mainController.database.entities.account.login) // router para login (POST)
+APIrouter.post("/auth/register", mainController.validator.validateSchema(registerSchema), mainController.database.entities.account.register) // router para registro (POST)
 
-// APIrouter.use(mainController.validator.validationToken)
+APIrouter.use(mainController.validator.validationToken)
 
 APIrouter.get(["/cuenta" , "/cuenta/:ID"], mainController.database.entities.account.getAccount) // router para la cuenta (GET)
 APIrouter.patch(["/cuenta/:ID"], mainController.database.entities.account.UpdateAccount) // router para la cuenta (PATCH)
@@ -49,7 +47,3 @@ APIrouter.put("/equipo" , mainController.database.entities.team.createTeam) //cr
 APIrouter.put(["/stat", "/stat/:ID"], mainController.database.entities.stat.createStat) // crea stats de un jugador
 
 APIrouter.get(["/jugador", "/jugador/:ID"], mainController.database.entities.player.getPlayers) // leer un jugador o editarlo
-
-APIrouter.post('/transferencia/:id', mainController.database.entities.team.transferenciaEquipo)
-
-APIrouter.post('/cambiar/:id', mainController.database.entities.team.cambiarEquipo)

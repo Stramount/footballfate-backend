@@ -1,93 +1,89 @@
 generator client {
-    provider        = "prisma-client-js"
-    previewFeatures = ["fullTextSearch"]
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {
-    provider          = "mysql"
-    // url               = "mysql://unqgdygbetursdfw:kaTvFDEFXkvWziwHtOlU@b9zxleynykc91qou6jse-mysql.services.clever-cloud.com:3306/b9zxleynykc91qou6jse"
-    url = "mysql://root:ZhCXIATXTsouXuNNhaqwrCLMzATKTFDn@monorail.proxy.rlwy.net:41871/railway"
-    shadowDatabaseUrl = "mysql://ugev5kzxff7gb7c9:hcc7hMI7KmXaPqiliIiB@b8wqdedw4nossfyjs7et-mysql.services.clever-cloud.com:3306/b8wqdedw4nossfyjs7et"
+  provider = "mysql"
+  url      = "mysql://unqgdygbetursdfw:kaTvFDEFXkvWziwHtOlU@b9zxleynykc91qou6jse-mysql.services.clever-cloud.com:3306/b9zxleynykc91qou6jse"
 }
 
 model Equipo {
-    ID             Int              @id @default(autoincrement())
-    NombreEquipo   String           @db.VarChar(75)
-    Puntuacion     Int
-    ID_Usuario     Int
-    Usuario        Usuario          @relation(fields: [ID_Usuario], references: [ID], onDelete: Cascade, onUpdate: Restrict, map: "Equipo_ibfk_1")
-    Equipo_Fecha   Equipo_Fecha[]
-    Equipo_Jugador Equipo_Jugador[]
+  ID             Int              @id @default(autoincrement())
+  NombreEquipo   String           @db.VarChar(75)
+  Puntuacion     Int
+  ID_Usuario     Int
+  Usuario        Usuario          @relation(fields: [ID_Usuario], references: [ID], onDelete: Cascade, onUpdate: Restrict, map: "Equipo_ibfk_1")
+  Equipo_Fecha   Equipo_Fecha[]
+  Equipo_Jugador Equipo_Jugador[]
 
-    @@index([ID_Usuario], map: "Equipo_ibfk_1")
+  @@index([ID_Usuario], map: "Equipo_ibfk_1")
 }
 
 model Usuario {
-    ID             Int      @id @default(autoincrement())
-    Nickname       String   @db.Char(35)
-    Contrase_a     String   @map("Contraseña") @db.Char(32)
-    Mail           String   @db.Char(54)
-    Presupuesto    Float    @db.Float
-    Transferencias Int?
-    Wildcard       Boolean?
-    Equipo         Equipo[]
+  ID             Int      @id @default(autoincrement())
+  Nickname       String   @db.Char(35)
+  Contrase_a     String   @map("Contraseña") @db.Char(32)
+  Mail           String   @db.Char(54)
+  Presupuesto    Float    @db.Float
+  Transferencias Int?
+  Wildcard       Boolean?
+  Equipo         Equipo[]
 }
 
 model Equipo_Fecha {
-    ID_Equipo Int
-    ID_Fecha  Int
-    Equipo    Equipo @relation(fields: [ID_Equipo], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Equipo_Fecha_ibfk_1")
-    Fecha     Fecha  @relation(fields: [ID_Fecha], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Equipo_Fecha_ibfk_2")
+  ID_Equipo Int
+  ID_Fecha  Int
+  Equipo    Equipo @relation(fields: [ID_Equipo], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Equipo_Fecha_ibfk_1")
+  Fecha     Fecha  @relation(fields: [ID_Fecha], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Equipo_Fecha_ibfk_2")
 
-    @@id([ID_Equipo, ID_Fecha])
-    @@index([ID_Fecha], map: "ID_Fecha")
+  @@id([ID_Equipo, ID_Fecha])
+  @@index([ID_Fecha], map: "ID_Fecha")
 }
 
 model Estadistica {
-    ID              Int     @id @default(autoincrement())
-    ID_Fecha        Int
-    ID_Jugador      Int
-    goles           Int
-    asistencias     Int
-    intercepciones  Int
-    atajadas        Int
-    penalesErrados  Int
-    penalesAtajados Int
-    asistioAClase   Boolean
-    puntos          Int
-    Fecha           Fecha   @relation(fields: [ID_Fecha], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Estadistica_ibfk_1")
-    Jugador         Jugador @relation(fields: [ID_Jugador], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Estadistica_ibfk_2")
+  ID              Int     @id @default(autoincrement())
+  ID_Fecha        Int
+  ID_Jugador      Int
+  goles           Int
+  asistencias     Int
+  intercepciones  Int
+  atajadas        Int
+  penalesErrados  Int
+  penalesAtajados Int
+  asistioAClase   Boolean
+  puntos          Int
+  Fecha           Fecha   @relation(fields: [ID_Fecha], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Estadistica_ibfk_1")
+  Jugador         Jugador @relation(fields: [ID_Jugador], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Estadistica_ibfk_2")
 
-    @@index([ID_Fecha], map: "ID_Fecha")
-    @@index([ID_Jugador], map: "ID_Jugador")
+  @@index([ID_Fecha], map: "ID_Fecha")
+  @@index([ID_Jugador], map: "ID_Jugador")
 }
 
 model Fecha {
-    ID           Int            @id @default(autoincrement())
-    fecha        DateTime       @db.Date
-    Equipo_Fecha Equipo_Fecha[]
-    Estadistica  Estadistica[]
+  ID           Int            @id @default(autoincrement())
+  fecha        DateTime       @db.Date
+  Equipo_Fecha Equipo_Fecha[]
+  Estadistica  Estadistica[]
 }
 
 model Jugador {
-    ID             Int              @id @default(autoincrement())
-    nombre         String           @db.Char(15)
-    apellido       String           @db.Char(20)
-    categoria      String           @db.Char(3)
-    precio         Float            @db.Float
-    Equipo_Jugador Equipo_Jugador[]
-    Estadistica    Estadistica[]
+  ID             Int              @id @default(autoincrement())
+  nombre         String           @db.Char(15)
+  apellido       String           @db.Char(20)
+  categoria      String           @db.Char(3)
+  precio         Float            @db.Float
+  Equipo_Jugador Equipo_Jugador[]
+  Estadistica    Estadistica[]
 }
 
 model Equipo_Jugador {
-    ID_Equipo   Int
-    ID_Jugador  Int
-    order       Int
-    estaEnBanca Boolean
-    esCapitan   Boolean
-    Equipo      Equipo  @relation(fields: [ID_Equipo], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Equipo_Jugador_ibfk_1")
-    Jugador     Jugador @relation(fields: [ID_Jugador], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Equipo_Jugador_ibfk_2")
+  ID_Equipo  Int
+  ID_Jugador Int
+  position   Int
+  Equipo     Equipo  @relation(fields: [ID_Equipo], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Equipo_Jugador_ibfk_1")
+  Jugador    Jugador @relation(fields: [ID_Jugador], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Equipo_Jugador_ibfk_2")
 
-    @@id([ID_Equipo, ID_Jugador])
-    @@index([ID_Jugador], map: "ID_Jugador")
+  @@id([ID_Equipo, ID_Jugador])
+  @@index([ID_Jugador], map: "ID_Jugador")
 }
