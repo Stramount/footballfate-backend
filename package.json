@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "node ./src/interface/index.js",
+    "dev": "nodemon ./src/interface/index.js",
     "test": "node --test ./fetch.test.js"
   },
   "repository": {
@@ -30,6 +30,7 @@
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
+    "nodemon": "^3.1.0",
     "zod": "^3.23.6"
   },
   "devDependencies": {

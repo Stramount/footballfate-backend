@@ -23,12 +23,25 @@ export class Account {
     static async getAccount(req, res, next) {
 
         if (!req.params.id){
-            const query_id = parseInt(await prisma.$queryRaw`SELECT ID FROM Fecha order by ID desc LIMIT 1;`)
+            const query_id = await prisma.$queryRaw`SELECT ID FROM Fecha order by ID desc LIMIT 1;`
             const users = await prisma.usuario.findMany({
                 where : {
-                    Equipo : { every : { Equipo_Fecha : { every : { Fecha : { is : { ID : query_id }}}}}}
+                    Equipo : { every : { Equipo_Fecha : { every : { Fecha : { is : { ID : query_id.ID }}}}}}
+                },
+                include : {
+                    Equipo : {
+                        include : {
+                            Equipo_Jugador : {
+                                include : {
+                                    Jugador : true
+                                }
+                            }
+                        }
+                    }
                 }
             })
+
+            users.map(u => ({}))
             return res.send(users)
         }
 
@@ -142,7 +155,7 @@ export class Team {
                     Equipo_Fecha: 
                     {
                         where : {
-                            ID_Fecha : query_id
+                            ID_Fecha : query_id.ID
                         }
                     },
                     Equipo_Jugador : true
@@ -155,7 +168,11 @@ export class Team {
                 ID: req.params.id
             },
             include : {
-                Equipo_Jugador : true
+                Equipo_Jugador : {
+                    include : {
+                        Jugador : true
+                    }
+                }
             }
         })
         // obtener el equipo que se pasa por ID
