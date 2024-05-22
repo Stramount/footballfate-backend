@@ -26,6 +26,8 @@ export class Account {
                     Equipo : { every : { Equipo_Fecha : { every : { Fecha : { is : { ID : query_id.ID }}}}}}
                 }
             })
+
+            users.map(u => ({}))
             return res.send(users)
         }
 
@@ -144,7 +146,7 @@ export class Team {
                     Equipo_Fecha: 
                     {
                         where : {
-                            ID_Fecha : query_id
+                            ID_Fecha : query_id.ID
                         }
                     },
                     Equipo_Jugador : true
@@ -159,7 +161,11 @@ export class Team {
                 ID: parseInt(req.params.ID)
             },
             include : {
-                Equipo_Jugador : true
+                Equipo_Jugador : {
+                    include : {
+                        Jugador : true
+                    }
+                }
             }
         })
         // obtener el equipo que se pasa por ID
