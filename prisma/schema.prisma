@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = "mysql://unqgdygbetursdfw:kaTvFDEFXkvWziwHtOlU@b9zxleynykc91qou6jse-mysql.services.clever-cloud.com:3306/b9zxleynykc91qou6jse"
+  url      = "mysql://root:tthoGxERRNZcFhhEXMeqHoUTwKQzvTDq@monorail.proxy.rlwy.net:55012/railway"
 }
 
 model Equipo {
@@ -28,14 +28,15 @@ model Usuario {
   Presupuesto    Float    @db.Float
   Transferencias Int?
   Wildcard       Boolean?
+  usandoWildcard Int
   Equipo         Equipo[]
 }
 
 model Equipo_Fecha {
   ID_Equipo Int
   ID_Fecha  Int
-  Equipo    Equipo @relation(fields: [ID_Equipo], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Equipo_Fecha_ibfk_1")
-  Fecha     Fecha  @relation(fields: [ID_Fecha], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Equipo_Fecha_ibfk_2")
+  Equipo    Equipo @relation(fields: [ID_Equipo], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "Equipo_Fecha_ibfk_1")
+  Fecha     Fecha  @relation(fields: [ID_Fecha], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "Equipo_Fecha_ibfk_2")
 
   @@id([ID_Equipo, ID_Fecha])
   @@index([ID_Fecha], map: "ID_Fecha")
@@ -53,8 +54,8 @@ model Estadistica {
   penalesAtajados Int
   asistioAClase   Boolean
   puntos          Int
-  Fecha           Fecha   @relation(fields: [ID_Fecha], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Estadistica_ibfk_1")
-  Jugador         Jugador @relation(fields: [ID_Jugador], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Estadistica_ibfk_2")
+  Fecha           Fecha   @relation(fields: [ID_Fecha], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "Estadistica_ibfk_1")
+  Jugador         Jugador @relation(fields: [ID_Jugador], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "Estadistica_ibfk_2")
 
   @@index([ID_Fecha], map: "ID_Fecha")
   @@index([ID_Jugador], map: "ID_Jugador")
@@ -63,6 +64,7 @@ model Estadistica {
 model Fecha {
   ID           Int            @id @default(autoincrement())
   fecha        DateTime       @db.Date
+  estaCerrado  Int
   Equipo_Fecha Equipo_Fecha[]
   Estadistica  Estadistica[]
 }
@@ -83,8 +85,8 @@ model Equipo_Jugador {
   order       Int
   estaEnBanca Boolean
   esCapitan   Boolean
-  Equipo      Equipo  @relation(fields: [ID_Equipo], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Equipo_Jugador_ibfk_1")
-  Jugador     Jugador @relation(fields: [ID_Jugador], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Equipo_Jugador_ibfk_2")
+  Equipo      Equipo  @relation(fields: [ID_Equipo], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "Equipo_Jugador_ibfk_1")
+  Jugador     Jugador @relation(fields: [ID_Jugador], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "Equipo_Jugador_ibfk_2")
 
   @@id([ID_Equipo, ID_Jugador])
   @@index([ID_Jugador], map: "ID_Jugador")

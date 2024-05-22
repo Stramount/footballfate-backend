@@ -4,16 +4,13 @@ import { PrismaClient } from "@prisma/client"
 
 const prisma = new PrismaClient()
 
-const PRISMA = new PrismaClient()
-
 
 export class Account {
-    static prisma = PRISMA
 
     static async deleteAccount(req, res, next) {
         await prisma.usuario.delete({
             where: {
-                ID: parseInt(req.params.id)
+                ID: parseInt(req.params.ID)
             }
         })
 
@@ -22,11 +19,11 @@ export class Account {
 
     static async getAccount(req, res, next) {
 
-        if (!req.params.id){
-            const query_id = parseInt(await prisma.$queryRaw`SELECT ID FROM Fecha order by ID desc LIMIT 1;`)
+        if (!req.params.ID){
+            const query_id = await prisma.$queryRaw`SELECT ID FROM Fecha order by ID desc LIMIT 1;`
             const users = await prisma.usuario.findMany({
                 where : {
-                    Equipo : { every : { Equipo_Fecha : { every : { Fecha : { is : { ID : query_id }}}}}}
+                    Equipo : { every : { Equipo_Fecha : { every : { Fecha : { is : { ID : query_id.ID }}}}}}
                 }
             })
             return res.send(users)
@@ -35,7 +32,7 @@ export class Account {
 
         const user = await prisma.usuario.findFirst({
             where: {
-                ID: req.params.id
+                ID: parseInt(req.params.ID)
             },
             include : {
                 Equipo : {
@@ -106,6 +103,7 @@ export class Account {
             console.log('Hay un error')
         }
 
+        const query_id = await prisma.$queryRaw`SELECT ID FROM Fecha order by ID desc LIMIT 1;`
         const user = await prisma.usuario.create({
             data: {
                 Nickname: req.body["username"],
@@ -114,11 +112,16 @@ export class Account {
                 Presupuesto: 100,
                 Transferencias: 2,
                 Wildcard: true,
+                usandoWildcard : 1,
                 Equipo: {
                     create: {
                         NombreEquipo: req.body["teamname"],
-                        Puntuacion: 0
-                        // arregla esto
+                        Puntuacion: 0,
+                        Equipo_Fecha : {
+                            create: {
+                                ID_Fecha : query_id.ID,
+                            }
+                        }
                     }
                 }
             }
@@ -130,7 +133,6 @@ export class Account {
 }
 
 export class Team {
-    static prisma = PRISMA
 
     static async getTeam(req, res, next) {
 
@@ -148,11 +150,13 @@ export class Team {
                     Equipo_Jugador : true
                 }
             })
-            return res.send(team)
+            res.send(team)
+
+            return team
         }
         const team = await prisma.equipo.findUnique({
             where: {
-                ID: req.params.id
+                ID: parseInt(req.params.ID)
             },
             include : {
                 Equipo_Jugador : true
@@ -160,27 +164,81 @@ export class Team {
         })
         // obtener el equipo que se pasa por ID
         // Realizar un ordenamiento de la alineacion para enviar al front
-        return res.send(team)
+
+        res.send(team)
+
+        return team
+    }
+
+    static async updateTeam(req, res, next) {
+        if (parseInt(req.headers.transfer)) {
+            return res.send(await Team.transferTeam(req))
+        }
+
+        const newTeam = await prisma.equipo.update({
+            where: {
+                ID: parseInt(req.params.ID)
+            },
+            data: {
+                NombreEquipo: req.body.teamname ?? Team.getTeam(req , {send : () => {}})["NombreEquipo"]
+            }
+        })
+
+        return res.send(newTeam)
     }
 
     static async transferTeam(req) {
-        const Userid = parseInt(req.params.USERID) // recibis el id del usuario
-        const id = parseInt(req.params.ID); // recibis el id del equipo
-        const { players } = req.body; // recibis los nuevos jugadores
-      
+        const {USERID , ID} = req.params// recibis el id del equipo y usuario
+        const { players , cantTransfers } = req.body; // recibis los nuevos jugadores
+
+        
+
+        let user = {}
+
+          await Account.getAccount(
+            {
+                params : {
+                    ID : parseInt(USERID)
+                }
+            },
+
+            {
+                json : (data) => {user = data}
+            },
+            
+            () => {}
+          )
+
+          let minusPoints = cantTransfers > user.Transferencias ? cantTransfers * 2 : 0
+
         // Realizar todas las operaciones en una transacción
         await prisma.$transaction(async (prisma) => {
           // Actualizar el presupuesto del usuario
+
+
           await prisma.usuario.update({
-            where: { ID: Userid },
+            where: { ID: parseInt(USERID) },
             data: {
-              Presupuesto: req.body.presupuesto
+              Presupuesto: req.body.budget
             }
           });
-      
+          
+          await prisma.equipo.update(
+            {
+                where : {
+                    ID : parseInt(ID)
+                },
+
+                data : {
+                    Puntuacion : minusPoints
+                }
+
+            }
+          )
+
           // Actualizar los jugadores del equipo
           await prisma.equipo_Jugador.deleteMany({
-            where: { ID_Equipo: id }
+            where: { ID_Equipo: parseInt(ID) }
           });
       
           await prisma.equipo_Jugador.createMany({
@@ -188,31 +246,13 @@ export class Team {
               order: p.order,
               estaEnBanca: p.estaEnBanca,
               esCapitan: p.esCapitan,
-              ID_Equipo: id,
+              ID_Equipo: parseInt(ID),
               ID_Jugador: p.ID_Jugador
             }))
           });
         });
         return "ok"
       }
-
-
-    static async updateTeam(req, res, next) {
-        if (req.headers.transfer) {
-            return res.send(await Team.transferTeam(req))
-        }
-        const newTeam = await prisma.equipo.update({
-            where: {
-                ID: req.params.id
-            },
-            data: {
-                NombreEquipo: req.body.teamname ?? Team.getTeam(req)["NombreEquipo"]
-            }
-        })
-        //editar tabla equipo
-        //nombre o alineacion
-        return res.send(newTeam)
-    }
 
     static async createTeam(req, res, next) { // se usa para cuando hacemos la nueva semana
         // crea una copia del equipo
@@ -223,7 +263,6 @@ export class Team {
 }
 
 export class Player {
-    static prisma = PRISMA
 
     static players = {
         "testPlayer": {
@@ -240,9 +279,7 @@ export class Player {
 
         const players = await prisma.jugador.findMany({
             where: {
-                nombre: {
-                    contains: req.params.name ?? ""
-                }
+                ID : parseInt(req.params.ID)
             },
             include: {
                 Estadistica: {
