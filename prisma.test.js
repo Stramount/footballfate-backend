@@ -1,7 +1,7 @@
-import { PrismaClient } from "@prisma/client"
+let date = new Date(Date.now())
 
-let prisma = new PrismaClient()
+console.log(date)
 
-let hola = await prisma.$queryRaw`SELECT ID, fecha FROM Fecha order by ID desc LIMIT 1;`
+let date2 =  new Date()
 
-console.log(hola.ID, hola.fecha)
+console.log(`${date2.getFullYear()}-${date2.getMonth() + 1}-${date2.getDate()}`)

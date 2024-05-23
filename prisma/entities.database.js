@@ -2,7 +2,12 @@ import Validator from "../src/controllers/validator.controller.js"
 import { PrismaClient } from "@prisma/client"
 
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient({
+    transactionOptions : {
+        timeout : 6000,
+        maxWait : 7000
+    }
+})
 
 
 export class Account {
@@ -144,7 +149,7 @@ export class Team {
 
         const query_id = await prisma.$queryRaw`SELECT ID FROM Fecha order by ID desc LIMIT 1;`
 
-        if (!req.params.ID) {
+        if (!parseInt(req.params.USERID)) {
             const team = await prisma.equipo.findMany({
                 include : {
                     Equipo_Fecha: {
@@ -159,9 +164,9 @@ export class Team {
 
             return team
         }
-        const team = await prisma.equipo.findUnique({
+        const teams = await prisma.equipo.findMany({
             where: {
-                ID: parseInt(req.params.ID)
+                ID_Usuario : parseInt(req.params.USERID)
             },
             include : {
                 Equipo_Jugador : {
@@ -172,18 +177,19 @@ export class Team {
             }
         })
         // obtener el equipo que se pasa por ID
-
-        return team
+        res.send(teams)
+        return teams
     }
 
     static async updateTeam(req, res, next) {
         if (parseInt(req.headers.transfer)) {
             return res.send(await Team.transferTeam(req))
         }
-
+        let user_id = req.params.USERID
+        let query_id = await prisma.$queryRaw`SELECT ID FROM Equipo where ID_Usuario like ${user_id}`
         const newTeam = await prisma.equipo.update({
             where: {
-                ID: parseInt(req.params.ID)
+                ID : query_id[0].ID
             },
             data: {
                 NombreEquipo: req.body.teamname ?? Team.getTeam(req , {send : () => {}})["NombreEquipo"]
@@ -261,30 +267,73 @@ export class Team {
       }
 
     static async createTeam(req, res, next) { // se usa para cuando hacemos la nueva semana
-        let antiguo_equipo = await Team.getTeam(req)
-        const query_id = await prisma.$queryRaw`SELECT ID FROM Fecha order by ID desc LIMIT 1;`
-        const newTeam = await prisma.equipo.create({
-            data : {
-                NombreEquipo : antiguo_equipo.NombreEquipo,
-                Puntuacion : 0,
-                ID_Usuario : antiguo_equipo.ID_Usuario,
-                Equipo_Fecha : {
-                    create : {
-                        Fecha : {
-                            connect : {
-                                ID : query_id[0].ID
+        await prisma.$transaction(async (prisma) => {  
+            const query_id = await prisma.$queryRaw`SELECT ID FROM Fecha order by ID desc LIMIT 1;`
+            let old_teams = await prisma.$queryRaw`SELECT * FROM Equipo e inner join Equipo_Fecha ef on e.ID=ef.ID_Equipo inner join Fecha f on ef.ID_Fecha=f.ID where f.ID like ${query_id[0].ID}`
+            console.log(old_teams)
+            let nuevaFecha = await Fecha.createFecha(new Date()) //yyyy-m-d-hh-mn-ss
+            await prisma.equipo.createMany({
+                data : old_teams.map(t => ({
+                    NombreEquipo : t.NombreEquipo,
+                    Puntuacion : 0,
+                    ID_Usuario : t.ID_Usuario,
+                    Equipo_Fecha : {
+                        create : {
+                            Fecha : {
+                                connect : {
+                                    ID : nuevaFecha.ID
+                                }
                             }
                         }
                     }
-                }
-            }
+                }))
+            })
         })
-        // crea una copia del equipo
-        // y lo asocia a la ultima fecha creada
-        // se reinician los puntos a 0
-        return res.json(newTeam)
+        return res.send('Hecho')
     }
 }
+
+
+export class Fecha {
+
+    static async getFecha(){
+        const lastFecha = await prisma.fecha.findFirst({
+            orderBy : [{
+                ID: 'desc'
+            }]
+        })
+        
+        res.send(lastFecha)
+        return lastFecha
+    }
+
+    static async createFecha(date){
+        const newFecha = await prisma.fecha.create({
+            data : {
+                fecha : `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
+                estaCerrado : 0
+            }
+        })
+        
+        return newFecha
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export class Player {
 
@@ -301,10 +350,11 @@ export class Player {
 
     static async getPlayers(req, res, next) {
 
+        let where = req.params.ID ? {ID : parseInt(req.params.ID)} : {}
+
+
         const players = await prisma.jugador.findMany({
-            where: {
-                ID : parseInt(req.params.ID)
-            },
+            where,
             include: {
                 Estadistica: {
                     select: {
@@ -333,16 +383,24 @@ export class Stat {
         let helper = await prisma.fecha.findFirst({ select: { ID: true }, orderBy: { ID: 'desc' } })
         const newStat = await prisma.estadistica.create({
             data: {
-                ID_Fecha: helper['ID'],
-                ID_Jugador: parseInt(req.body.playerId),
-                goles: parseInt(req.body.goals),
-                asistencias: parseInt(req.body.assists),
-                intercepciones: parseInt(req.body.interceptions),
-                atajadas: parseInt(req.body.saves),
-                penalesErrados: parseInt(req.body.failedPenalties),
-                penalesAtajados: parseInt(req.body.savedPenalties),
+                goles: req.body.goals,
+                asistencias: req.body.assists,
+                intercepciones: req.body.interceptions,
+                atajadas: req.body.saves,
+                penalesErrados: req.body.failedPenalties,
+                penalesAtajados: req.body.savedPenalties,
                 asistioAClase: Boolean(req.body.assistance),
-                puntos: parseInt(req.body.points)
+                puntos: req.body.points,
+                Fecha : {
+                    connect : {
+                        ID : helper["ID"]
+                    }
+                },
+                Jugador : {
+                    connect : {
+                        ID : parseInt(req.params.ID)
+                    }
+                }
             }
         })
         return res.json(newStat)
