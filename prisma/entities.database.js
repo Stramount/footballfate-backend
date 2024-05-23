@@ -268,10 +268,12 @@ export class Team {
 
     static async createTeam(req, res, next) { // se usa para cuando hacemos la nueva semana
         await prisma.$transaction(async (prisma) => {  
-            const query_id = await prisma.$queryRaw`SELECT ID FROM Fecha order by ID desc LIMIT 1;`
-            let old_teams = await prisma.$queryRaw`SELECT * FROM Equipo e inner join Equipo_Fecha ef on e.ID=ef.ID_Equipo inner join Fecha f on ef.ID_Fecha=f.ID where f.ID like ${query_id[0].ID}`
-            console.log(old_teams)
-            let nuevaFecha = await Fecha.createFecha(new Date()) //yyyy-m-d-hh-mn-ss
+            const query_id = await Fecha.getFecha()
+
+            let old_teams = await prisma.$queryRaw`SELECT * FROM Equipo e inner join Equipo_Fecha ef on e.ID=ef.ID_Equipo inner join Fecha f on ef.ID_Fecha=f.ID where f.ID like ${query_id.ID}`
+
+            let nuevaFecha = await Fecha.createFecha(new Date()) //yyyy-m-d
+
             await prisma.equipo.createMany({
                 data : old_teams.map(t => ({
                     NombreEquipo : t.NombreEquipo,
@@ -289,6 +291,7 @@ export class Team {
                 }))
             })
         })
+
         return res.send('Hecho')
     }
 }
@@ -303,7 +306,6 @@ export class Fecha {
             }]
         })
         
-        res.send(lastFecha)
         return lastFecha
     }
 
