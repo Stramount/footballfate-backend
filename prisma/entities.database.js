@@ -122,10 +122,8 @@ export class Account {
                         Equipo_Fecha : {
                             create: {
                                 Fecha: {
-                                    create: {
-                                        ID_Fecha : query_fecha.ID,
-                                        fecha : query_fecha.fecha,
-                                        estaCerrado : 0
+                                    connect : {
+                                        ID : query_fecha[0].ID
                                     }
                                 }
                             }
@@ -151,7 +149,7 @@ export class Team {
                 include : {
                     Equipo_Fecha: {
                         where : {
-                            ID_Fecha : query_id.ID
+                            ID_Fecha : query_id[0].ID
                         }
                     },
                     Equipo_Jugador : true
@@ -267,13 +265,16 @@ export class Team {
         const query_id = await prisma.$queryRaw`SELECT ID FROM Fecha order by ID desc LIMIT 1;`
         const newTeam = await prisma.equipo.create({
             data : {
-                ID : parseInt(req.params.ID),
                 NombreEquipo : antiguo_equipo.NombreEquipo,
                 Puntuacion : 0,
                 ID_Usuario : antiguo_equipo.ID_Usuario,
                 Equipo_Fecha : {
                     create : {
-                        ID_Fecha : query_id.ID
+                        Fecha : {
+                            connect : {
+                                ID : query_id[0].ID
+                            }
+                        }
                     }
                 }
             }
