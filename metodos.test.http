@@ -50,7 +50,7 @@ GET http://localhost:3000/api/equipo HTTP/1.1
 
 ### este metodo debe crear un equipo nuevo (copia de carbono del anterior)
 
-PUT http://localhost:3000/api/equipo HTTP/1.1
+PUT http://localhost:3000/api/equipo/1 HTTP/1.1
 
 ### edita la alineacion y otras cosas relacionadas al equipo
 
@@ -59,7 +59,7 @@ Content-Type: application/json
 transfer: 1
 
 {
-    "cantTransfers"
+    "cantTransfers" : 1,
     "budget": 100,
     "players": [
         {

@@ -105,7 +105,7 @@ export class Account {
             console.log('Hay un error')
         }
 
-        const query_id = await prisma.$queryRaw`SELECT ID FROM Fecha order by ID desc LIMIT 1;`
+        const query_fecha = await prisma.$queryRaw`SELECT ID, fecha FROM Fecha order by ID desc LIMIT 1;`
         const user = await prisma.usuario.create({
             data: {
                 Nickname: req.body["username"],
@@ -121,7 +121,13 @@ export class Account {
                         Puntuacion: 0,
                         Equipo_Fecha : {
                             create: {
-                                ID_Fecha : query_id.ID,
+                                Fecha: {
+                                    create: {
+                                        ID_Fecha : query_fecha.ID,
+                                        fecha : query_fecha.fecha,
+                                        estaCerrado : 0
+                                    }
+                                }
                             }
                         }
                     }
@@ -143,8 +149,7 @@ export class Team {
         if (!req.params.ID) {
             const team = await prisma.equipo.findMany({
                 include : {
-                    Equipo_Fecha: 
-                    {
+                    Equipo_Fecha: {
                         where : {
                             ID_Fecha : query_id.ID
                         }
@@ -169,9 +174,6 @@ export class Team {
             }
         })
         // obtener el equipo que se pasa por ID
-        // Realizar un ordenamiento de la alineacion para enviar al front
-
-        res.send(team)
 
         return team
     }
@@ -261,10 +263,25 @@ export class Team {
       }
 
     static async createTeam(req, res, next) { // se usa para cuando hacemos la nueva semana
+        let antiguo_equipo = await Team.getTeam(req)
+        const query_id = await prisma.$queryRaw`SELECT ID FROM Fecha order by ID desc LIMIT 1;`
+        const newTeam = await prisma.equipo.create({
+            data : {
+                ID : parseInt(req.params.ID),
+                NombreEquipo : antiguo_equipo.NombreEquipo,
+                Puntuacion : 0,
+                ID_Usuario : antiguo_equipo.ID_Usuario,
+                Equipo_Fecha : {
+                    create : {
+                        ID_Fecha : query_id.ID
+                    }
+                }
+            }
+        })
         // crea una copia del equipo
         // y lo asocia a la ultima fecha creada
         // se reinician los puntos a 0
-        return res.send("Equipos Creados")
+        return res.json(newTeam)
     }
 }
 
