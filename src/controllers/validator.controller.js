@@ -1,14 +1,30 @@
 import jwt from 'jsonwebtoken'
+import bcrypt from 'bcrypt'
 
 export default class Validator {
 
-    static validationToken(req, res, next) {
-        const { token } = req.cookies
-        return next()
+    static async validationTokenRoutes(req, res, next) {
+        const { token } = req.cookies.token ? req.cookies : req.headers 
 
-        jwt.verify(token, process.env.SECRET_TOKEN, (error, user) => {
-            if (error)
-                return res.status(400).json({ message: 'No autorizado, token no valido' })
+        let result = Validator.validationToken(token)
+
+        if (result instanceof Error)
+            return res.status(401).json({ message: result.message })
+
+        next()
+    }
+
+    static validationToken(token) {
+        if (!token){
+            return new Error('Token no dado')
+        }
+
+        return new Promise((resolve, reject) => {
+            jwt.verify(token, process.env.SECRET_TOKEN, (error, user) => {
+                if (error)
+                    reject(error)
+                resolve(user)
+            })
         })
     }
 
@@ -31,6 +47,15 @@ export default class Validator {
                 return res.status(400).json({ e })
             }
         }
+    }
+
+    static async hashPassword(password) {
+        let salt = await bcrypt.genSalt(10)
+        return await bcrypt.hash(password, salt)
+    }
+
+    static async comparePassword(password, hash) {
+        return await bcrypt.compare(password, hash)
     }
 }
 

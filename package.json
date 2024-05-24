@@ -5,8 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon ./src/interface/index.js",
-    "test": "node --test ./fetch.test.js"
+    "dev": "node ./src/interface/index.js",
+    "test": "node --test ./fetch.test.js",
+    "watch": "node --watch ./src/interface/index.js"
   },
   "repository": {
     "type": "git",
@@ -23,6 +24,7 @@
     "@prisma/client": "^5.14.0",
     "@sentry/node": "^7.112.2",
     "@sentry/profiling-node": "^7.112.2",
+    "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",

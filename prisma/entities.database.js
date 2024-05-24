@@ -84,19 +84,36 @@ export class Account {
     }
 
     static async login(req, res, next) {
-        const token = await Validator.createToken({ email: req.body.email })
+        
         let { email, password } = req.body
         const user = await prisma.usuario.findFirst({
             where: {
                 Mail: email,
-                Contrase_a: password
             }
         })
+
         if (!user) { res.status(404); return res.send("Usuario no encontrado") }
 
-        res.cookie('token', token)
+        
 
-        return res.json(user)
+        if (await Validator.comparePassword(password, user.Contrase_a) && req.cookies.token) {
+            let user = await Validator.validationToken(req , res , next)
+
+            if (user instanceof Error) {
+
+                if (user.message === 'jwt expired') {
+                    let token = await Validator.createToken({ email: email })
+                    return res.cookie('token', token).status(200).send('Token expirado, se ha generado uno nuevo')
+                }
+                
+                return res.status(401).send({ message: user.message })
+            }
+
+            return res.send(user)
+        }
+
+        return res.status(400).send("Contraseña incorrecta")
+
     }
 
     static async register(req, res, next) {
@@ -114,7 +131,7 @@ export class Account {
         const user = await prisma.usuario.create({
             data: {
                 Nickname: req.body["username"],
-                Contrase_a: req.body["password"],
+                Contrase_a: await Validator.hashPassword(req.body["password"]),
                 Mail: req.body["email"],
                 Presupuesto: 100,
                 Transferencias: 2,
@@ -139,7 +156,6 @@ export class Account {
         })
 
         return res.json(user)
-
     }
 }
 

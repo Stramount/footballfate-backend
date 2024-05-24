@@ -23,7 +23,7 @@ model Equipo {
 model Usuario {
   ID             Int      @id @default(autoincrement())
   Nickname       String   @db.Char(35)
-  Contrase_a     String   @map("Contraseña") @db.Char(32)
+  Contrase_a     String   @map("Contraseña") @db.VarChar(255)
   Mail           String   @db.Char(54)
   Presupuesto    Float    @db.Float
   Transferencias Int?
