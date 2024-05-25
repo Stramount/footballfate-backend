@@ -4,8 +4,8 @@ import { PrismaClient } from "@prisma/client"
 
 const prisma = new PrismaClient({
     transactionOptions : {
-        timeout : 6000,
-        maxWait : 7000
+        timeout : 9000,
+        maxWait : 10000
     }
 })
 
@@ -28,7 +28,7 @@ export class Account {
             const query_id = await prisma.$queryRaw`SELECT ID FROM Fecha order by ID desc LIMIT 1;`
             const users = await prisma.usuario.findMany({
                 where : {
-                    Equipo : { every : { Equipo_Fecha : { every : { Fecha : { is : { ID : query_id.ID }}}}}}
+                    Equipo : { every :  { Fecha : { is : { ID : query_id.ID }}}}
                 }
             })
 
@@ -44,11 +44,7 @@ export class Account {
             include : {
                 Equipo : {
                     include : {
-                        Equipo_Fecha : {
-                            include : {
-                                Fecha : true
-                            }
-                        }
+                        Fecha : true
                     }
                 }
             }
@@ -137,19 +133,18 @@ export class Account {
                 Transferencias: 2,
                 Wildcard: true,
                 usandoWildcard : 1,
+                logged : true,
                 Equipo: {
                     create: {
                         NombreEquipo: req.body["teamname"],
                         Puntuacion: 0,
-                        Equipo_Fecha : {
-                            create: {
-                                Fecha: {
-                                    connect : {
-                                        ID : query_fecha[0].ID
-                                    }
-                                }
+                        Fecha: {
+                            connect : {
+                                ID : query_fecha[0].ID
                             }
                         }
+                            
+                        
                     }
                 }
             }
@@ -168,9 +163,9 @@ export class Team {
         if (!parseInt(req.params.USERID)) {
             const team = await prisma.equipo.findMany({
                 include : {
-                    Equipo_Fecha: {
+                    Fecha: {
                         where : {
-                            ID_Fecha : query_id[0].ID
+                            ID : query_id[0].ID
                         }
                     },
                     Equipo_Jugador : true
@@ -286,28 +281,27 @@ export class Team {
         await prisma.$transaction(async (prisma) => {  
             const query_id = await Fecha.getFecha()
 
-            let old_teams = await prisma.$queryRaw`SELECT * FROM Equipo e inner join Equipo_Fecha ef on e.ID=ef.ID_Equipo inner join Fecha f on ef.ID_Fecha=f.ID where f.ID like ${query_id.ID}`
+            let old_teams = await prisma.$queryRaw`SELECT * FROM Equipo e inner join Fecha f on e.ID_Fecha=f.ID where f.ID like ${query_id.ID}`
+            console.log(old_teams)
 
             let nuevaFecha = await Fecha.createFecha(new Date()) //yyyy-m-d
+            
 
-            await prisma.equipo.createMany({
+            const resultado = await prisma.equipo.createMany({
                 data : old_teams.map(t => ({
                     NombreEquipo : t.NombreEquipo,
                     Puntuacion : 0,
                     ID_Usuario : t.ID_Usuario,
-                    Equipo_Fecha : {
-                        create : {
-                            Fecha : {
-                                connect : {
-                                    ID : nuevaFecha.ID
-                                }
-                            }
+                    Fecha : {
+                        connect : {
+                            ID : nuevaFecha.ID
                         }
                     }
                 }))
             })
+            console.log(resultado)
         })
-
+        
         return res.send('Hecho')
     }
 }
@@ -336,21 +330,6 @@ export class Fecha {
         return newFecha
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 export class Player {

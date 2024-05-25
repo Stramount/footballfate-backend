@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "node ./src/interface/index.js",
+    "dev": "nodemon ./src/interface/index.js",
     "test": "node --test ./fetch.test.js",
     "watch": "node --watch ./src/interface/index.js"
   },

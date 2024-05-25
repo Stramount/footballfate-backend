@@ -34,7 +34,7 @@ APIrouter.get("/", (req , res) => res.send("hi")) // bienvenida a la API
 APIrouter.post("/auth/login", mainController.validator.validateSchema(loginSchema), mainController.database.entities.account.login) // router para login (POST)
 APIrouter.post("/auth/register", mainController.validator.validateSchema(registerSchema), mainController.database.entities.account.register) // router para registro (POST)
 
-APIrouter.use(mainController.validator.validationTokenRoutes) // middleware para validar el token
+///APIrouter.use(mainController.validator.validationTokenRoutes) // middleware para validar el token
 
 APIrouter.get(["/cuenta" , "/cuenta/:ID"], mainController.database.entities.account.getAccount) // router para la cuenta (GET)
 APIrouter.patch(["/cuenta/:ID"], mainController.database.entities.account.UpdateAccount) // router para la cuenta (PATCH)

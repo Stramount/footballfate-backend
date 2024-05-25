@@ -18,10 +18,10 @@ POST http://localhost:3000/api/auth/register HTTP/1.1
 Content-Type: application/json
 
 {
-    "username": "javitest2",
-    "password": "javi12342",
-    "email": "javi2@gmail.com",
-    "teamname": "cr7fc2"
+    "username": "pedro",
+    "password": "pedro124123",
+    "email": "pedrito@gmail.com",
+    "teamname": "pedroRFC"
 }
 
 

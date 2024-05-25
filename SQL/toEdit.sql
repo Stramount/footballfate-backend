@@ -1,2 +1,3 @@
 ALTER TABLE Usuario
-modify COLUMN Contraseña varchar(255) not null
+add column logged boolean not null;
+

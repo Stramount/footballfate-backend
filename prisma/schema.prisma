@@ -29,6 +29,7 @@ model Usuario {
   Transferencias Int?
   Wildcard       Boolean?
   usandoWildcard Int
+  logged         Boolean
   Equipo         Equipo[]
 }
 
