@@ -13,11 +13,13 @@ model Equipo {
   NombreEquipo   String           @db.VarChar(75)
   Puntuacion     Int
   ID_Usuario     Int
+  Fecha_ID       Int
   Usuario        Usuario          @relation(fields: [ID_Usuario], references: [ID], onDelete: Cascade, onUpdate: Restrict, map: "Equipo_ibfk_1")
-  Equipo_Fecha   Equipo_Fecha[]
+  Fecha          Fecha            @relation(fields: [Fecha_ID], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Equipo_ibfk_2")
   Equipo_Jugador Equipo_Jugador[]
 
   @@index([ID_Usuario], map: "Equipo_ibfk_1")
+  @@index([Fecha_ID], map: "Fecha_ID")
 }
 
 model Usuario {
@@ -33,20 +35,9 @@ model Usuario {
   Equipo         Equipo[]
 }
 
-model Equipo_Fecha {
-  ID_Equipo Int
-  ID_Fecha  Int
-  Equipo    Equipo @relation(fields: [ID_Equipo], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Equipo_Fecha_ibfk_1")
-  Fecha     Fecha  @relation(fields: [ID_Fecha], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Equipo_Fecha_ibfk_2")
-
-  @@id([ID_Equipo, ID_Fecha])
-  @@index([ID_Fecha], map: "ID_Fecha")
-}
-
 model Estadistica {
   ID              Int     @id @default(autoincrement())
   ID_Fecha        Int
-  ID_Jugador      Int
   goles           Int
   asistencias     Int
   intercepciones  Int
@@ -55,19 +46,20 @@ model Estadistica {
   penalesAtajados Int
   asistioAClase   Boolean
   puntos          Int
+  ID_Jugador      Int
   Fecha           Fecha   @relation(fields: [ID_Fecha], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Estadistica_ibfk_1")
-  Jugador         Jugador @relation(fields: [ID_Jugador], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Estadistica_ibfk_2")
+  Jugador         Jugador @relation(fields: [ID_Jugador], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "Estadistica_ibfk_2")
 
   @@index([ID_Fecha], map: "ID_Fecha")
   @@index([ID_Jugador], map: "ID_Jugador")
 }
 
 model Fecha {
-  ID           Int            @id @default(autoincrement())
-  fecha        String?        @db.Char(25)
-  estaCerrado  Int
-  Equipo_Fecha Equipo_Fecha[]
-  Estadistica  Estadistica[]
+  ID          Int           @id @default(autoincrement())
+  fecha       String?       @db.Char(25)
+  estaCerrado Int
+  Equipo      Equipo[]
+  Estadistica Estadistica[]
 }
 
 model Jugador {
@@ -83,11 +75,11 @@ model Jugador {
 model Equipo_Jugador {
   ID_Equipo   Int
   ID_Jugador  Int
-  order       Int
-  estaEnBanca Boolean
+  playerOrder Int
   esCapitan   Boolean
-  Equipo      Equipo  @relation(fields: [ID_Equipo], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Equipo_Jugador_ibfk_1")
-  Jugador     Jugador @relation(fields: [ID_Jugador], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Equipo_Jugador_ibfk_2")
+  estaEnBanca Boolean
+  Equipo      Equipo  @relation(fields: [ID_Equipo], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "Equipo_Jugador_ibfk_1")
+  Jugador     Jugador @relation(fields: [ID_Jugador], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "Equipo_Jugador_ibfk_2")
 
   @@id([ID_Equipo, ID_Jugador])
   @@index([ID_Jugador], map: "ID_Jugador")
