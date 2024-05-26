@@ -281,25 +281,18 @@ export class Team {
         await prisma.$transaction(async (prisma) => {  
             const query_id = await Fecha.getFecha()
 
-            let old_teams = await prisma.$queryRaw`SELECT * FROM Equipo e inner join Fecha f on e.ID_Fecha=f.ID where f.ID like ${query_id.ID}`
-            console.log(old_teams)
+            let old_teams = await prisma.$queryRaw`SELECT * FROM Equipo e inner join Fecha f on e.Fecha_ID=f.ID where f.ID = ${query_id.ID}`
 
             let nuevaFecha = await Fecha.createFecha(new Date()) //yyyy-m-d
-            
 
-            const resultado = await prisma.equipo.createMany({
+            await prisma.equipo.createMany({
                 data : old_teams.map(t => ({
                     NombreEquipo : t.NombreEquipo,
                     Puntuacion : 0,
                     ID_Usuario : t.ID_Usuario,
-                    Fecha : {
-                        connect : {
-                            ID : nuevaFecha.ID
-                        }
-                    }
+                    Fecha_ID : nuevaFecha.ID
                 }))
             })
-            console.log(resultado)
         })
         
         return res.send('Hecho')
