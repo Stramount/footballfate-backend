@@ -45,4 +45,21 @@ CREATE TABLE Equipo_Jugador(
     PRIMARY KEY(ID_Equipo, ID_Jugador),
     FOREIGN KEY (ID_Equipo) REFERENCES Equipo(ID) ON DELETE CASCADE,
     FOREIGN KEY (ID_Jugador) REFERENCES Jugador(ID) ON DELETE CASCADE
-);*/
+);
+
+delete from Fecha
+
+insert into Fecha (fecha , estaCerrado)
+values
+    ("2024-06-04" , 0)
+
+delete from Estadistica
+
+delete from Jugador
+
+INSERT INTO Jugador('nombre','apellido','categoria','precio')
+values('Sebastian,'Moschen','PT',4.5),('Matias','Quinteros','PT',4.5),('Fabrizio','Galvez','PT',4.5),('Pietro','Elvireti','PT',4.5),('Facundo','Dimitrioff','DEF',4.5),
+('Pietro','Elvireti','',),('Matias','Quinteros','',),('Sebastian','Moschen','',),('Marcos','Valentino','',),('Agustin','Jerez','',),('Tiziano','Ferro','',),
+('Romeno','','',),('','','',),('','','',),('','','',),('','','',)
+
+;*/

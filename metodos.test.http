@@ -6,7 +6,7 @@ GET http://localhost:3000/api/cuenta HTTP/1.1
 
 #####
 
-GET http://localhost:3000/api/cuenta/6 HTTP/1.1
+GET http://localhost:3000/api/cuenta/20 HTTP/1.1
 
 #####
 
@@ -18,10 +18,10 @@ POST http://localhost:3000/api/auth/register HTTP/1.1
 Content-Type: application/json
 
 {
-    "username": "sebas",
-    "password": "manuel34213",
-    "email": "sebas@gmail.com",
-    "teamname": "sebasCARP"
+    "username": "eljav22qqqqqqqq222222222i2",
+    "password": "javi22222333333333322222234213",
+    "email": "jajav222222222224444444444i@gmail.com",
+    "teamname": "552222222222P"
 }
 
 
@@ -46,7 +46,8 @@ Content-Type: application/json
 #### el siguiente GET debe devolver los datos de la tabla equipo del id seleccionado, 
 ###la alineacion no debe pasar IDs, debe pasar los objeto jugador con su ultima
 #### fila de stats
-GET http://localhost:3000/api/equipo/6 HTTP/1.1
+
+GET http://localhost:3000/api/equipo/22 HTTP/1.1
 
 #### idem del anterior pero se devuelven todos los equipos
 GET http://localhost:3000/api/equipo HTTP/1.1
@@ -57,7 +58,7 @@ PUT http://localhost:3000/api/equipo HTTP/1.1
 
 ### edita la alineacion y otras cosas relacionadas al equipo
 
-PATCH  http://localhost:3000/api/equipo/1/1 HTTP/1.1
+PATCH  http://localhost:3000/api/equipo/22 HTTP/1.1
 Content-Type: application/json
 transfer: 1
 
@@ -67,55 +68,55 @@ transfer: 1
     "players": [
         {
           "ID_Jugador": 1,
-          "order": 0,
+          "playerOrder": 0,
           "estaEnBanca": false,
           "esCapitan": false
         },
         {
           "ID_Jugador": 2,
-          "order": 0,
+          "playerOrder": 0,
           "estaEnBanca": false,
           "esCapitan": false
         },
         {
           "ID_Jugador": 3,
-          "order": 0,
+          "playerOrder": 0,
           "estaEnBanca": false,
           "esCapitan": false
         },
         {
           "ID_Jugador": 4,
-          "order": 0,
+          "playerOrder": 0,
           "estaEnBanca": false,
           "esCapitan": false
         },
         {
           "ID_Jugador": 5,
-          "order": 0,
+          "playerOrder": 0,
           "estaEnBanca": false,
           "esCapitan": false
         },
         {
           "ID_Jugador": 6,
-          "order": 0,
+          "playerOrder": 0,
           "estaEnBanca": false,
           "esCapitan": false
         },
         {
           "ID_Jugador": 7,
-          "order": 0,
+          "playerOrder": 0,
           "estaEnBanca": false,
           "esCapitan": false
         },
         {
           "ID_Jugador": 8,
-          "order": 0,
+          "playerOrder": 0,
           "estaEnBanca": false,
           "esCapitan": false
         },
         {
           "ID_Jugador": 9,
-          "order": 0,
+          "playerOrder": 0,
           "estaEnBanca": false,
           "esCapitan": false
         }
@@ -123,7 +124,7 @@ transfer: 1
 }
 
 ###
-PUT http://localhost:3000/api/stat/8 HTTP/1.1
+PUT http://localhost:3000/api/stat/2 HTTP/1.1
 Content-Type: application/json
 
 {
@@ -133,6 +134,5 @@ Content-Type: application/json
   "saves" : 10,
   "failedPenalties" : 0,
   "savedPenalties" : 0,
-  "assistance" : 1,
-  "points" : 8
+  "assistance" : true
 }

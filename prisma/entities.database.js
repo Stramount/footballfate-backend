@@ -120,7 +120,7 @@ export class Account {
             console.log('token:', token)
         } catch (e) {
             console.log(e)
-            console.log('Hay un error')
+            return res.status(401).send(e)
         }
 
         const query_fecha = await prisma.$queryRaw`SELECT ID, fecha FROM Fecha order by ID desc LIMIT 1;`
@@ -147,6 +147,17 @@ export class Account {
                         
                     }
                 }
+            },
+            include: {
+                Equipo: {
+                    include: {
+                        Equipo_Jugador: {
+                            include: {
+                                Jugador: true
+                            }
+                        }
+                    }
+                }
             }
         })
 
@@ -158,17 +169,19 @@ export class Team {
 
     static async getTeam(req, res, next) {
 
-        const query_id = await prisma.$queryRaw`SELECT ID FROM Fecha order by ID desc LIMIT 1;`
+        const query_id = Fecha.getFecha()
 
         if (!parseInt(req.params.USERID)) {
             const team = await prisma.equipo.findMany({
-                include : {
-                    Fecha: {
-                        where : {
-                            ID : query_id[0].ID
+                where : {
+                    Fecha_ID : query_id.ID
+                },
+                include:{
+                    Equipo_Jugador: {
+                        include: {
+                            Jugador: true
                         }
-                    },
-                    Equipo_Jugador : true
+                    }
                 }
             })
             res.send(team)
@@ -211,10 +224,20 @@ export class Team {
     }
 
     static async transferTeam(req) {
-        const {USERID , ID} = req.params// recibis el id del equipo y usuario
+        const {USERID} = req.params// recibis el id del usuario
         const { players , cantTransfers } = req.body; // recibis los nuevos jugadores
 
-        
+        const fechas = await prisma.fecha.findMany()
+        const ultimaFecha = fechas[fechas.length - 1]
+
+        const team = await prisma.equipo.findFirst({
+            where: {
+                Usuario: {
+                    ID: parseInt(USERID)
+                },
+                Fecha_ID: ultimaFecha.ID
+            }
+        })
 
         let user = {}
 
@@ -239,17 +262,19 @@ export class Team {
           // Actualizar el presupuesto del usuario
 
 
-          await prisma.usuario.update({
+          const user = await prisma.usuario.update({
             where: { ID: parseInt(USERID) },
             data: {
               Presupuesto: req.body.budget
+            }, include: {
+                Equipo: true
             }
           });
           
           await prisma.equipo.update(
             {
                 where : {
-                    ID : parseInt(ID)
+                    ID: team.ID
                 },
 
                 data : {
@@ -261,15 +286,15 @@ export class Team {
 
           // Actualizar los jugadores del equipo
           await prisma.equipo_Jugador.deleteMany({
-            where: { ID_Equipo: parseInt(ID) }
+            where: { ID_Equipo: team.ID }
           });
-      
+          
           await prisma.equipo_Jugador.createMany({
             data: players.map(p => ({
-              order: p.order,
+              playerOrder: p.playerOrder,
               estaEnBanca: p.estaEnBanca,
               esCapitan: p.esCapitan,
-              ID_Equipo: parseInt(ID),
+              ID_Equipo: parseInt(team.ID),
               ID_Jugador: p.ID_Jugador
             }))
           });
@@ -278,22 +303,60 @@ export class Team {
       }
 
     static async createTeam(req, res, next) { // se usa para cuando hacemos la nueva semana
+
         await prisma.$transaction(async (prisma) => {  
             const query_id = await Fecha.getFecha()
 
-            let old_teams = await prisma.$queryRaw`SELECT * FROM Equipo e inner join Fecha f on e.Fecha_ID=f.ID where f.ID = ${query_id.ID}`
+            //let old_teams = await prisma.$queryRaw`SELECT * FROM Equipo e inner join Fecha f on e.Fecha_ID=f.ID where f.ID = ${query_id.ID}`
+
+
+            const oldTeams = await prisma.equipo.findMany({
+                where: {
+                    Fecha_ID: query_id.ID
+                },
+                include: {
+                    Equipo_Jugador: true
+                }
+            })
 
             let nuevaFecha = await Fecha.createFecha(new Date()) //yyyy-m-d
 
             await prisma.equipo.createMany({
-                data : old_teams.map(t => ({
+                data : oldTeams.map(t => ({
                     NombreEquipo : t.NombreEquipo,
                     Puntuacion : 0,
                     ID_Usuario : t.ID_Usuario,
                     Fecha_ID : nuevaFecha.ID
                 }))
             })
-        })
+
+            const newTeams = await prisma.equipo.findMany({
+                where: {
+                    Fecha_ID: nuevaFecha.ID
+                }
+            })
+
+            let data = []
+
+            for (let i in oldTeams) {
+                for (const ej of oldTeams[i].Equipo_Jugador){
+                    data.push({
+                        ID_Equipo: newTeams[i].ID,
+                        esCapitan: ej.esCapitan,
+                        estaEnBanca: ej.estaEnBanca,
+                        ID_Jugador: ej.ID_Jugador,
+                        playerOrder: ej.playerOrder
+                    })
+                }
+            }
+
+            
+
+            await prisma.equipo_Jugador.createMany({
+                data
+            })
+    })
+    
         
         return res.send('Hecho')
     }
@@ -369,8 +432,34 @@ export class Player {
 
 export class Stat {
 
+    static async getPlayerPoints(p) {
+        let points = 0
+        if (p.assistance)
+          points++
+        switch (p.position) {
+          case 'DEL':
+            points += p.goals * 4
+            break
+          case 'DF':
+            points += p.goals * 6
+            break
+          case 'MC':
+            points += p.goals * 5
+            break
+          case 'PT':
+            points += p.goals * 10
+            break
+        }
+        points += p.assists * 3
+        points -= p.failedPenalties * 2
+        points += p.position === 'PT' ? 0 : parseInt(p.interceptions / 2)
+        points += p.savedPenalties * 5
+        points += p.position === 'PT' ? parseInt(p.saves / 2) : 0
+        return points
+      }
+
     static async createStat(req, res, next) {
-        let helper = await prisma.fecha.findFirst({ select: { ID: true }, orderBy: { ID: 'desc' } })
+        let id_fecha = await Fecha.getFecha()
         const newStat = await prisma.estadistica.create({
             data: {
                 goles: req.body.goals,
@@ -379,11 +468,11 @@ export class Stat {
                 atajadas: req.body.saves,
                 penalesErrados: req.body.failedPenalties,
                 penalesAtajados: req.body.savedPenalties,
-                asistioAClase: Boolean(req.body.assistance),
-                puntos: req.body.points,
+                asistioAClase: req.body.assistance,
+                puntos: await Stat.getPlayerPoints(req.body),
                 Fecha : {
                     connect : {
-                        ID : helper["ID"]
+                        ID : id_fecha.ID
                     }
                 },
                 Jugador : {

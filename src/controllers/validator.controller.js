@@ -4,14 +4,16 @@ import bcrypt from 'bcrypt'
 export default class Validator {
 
     static async validationTokenRoutes(req, res, next) {
-        const { token } = req.cookies.token ? req.cookies : req.headers 
+        const { token } = req.cookies.token ? req.cookies : req.headers
 
-        let result = Validator.validationToken(token)
+        try {
+            await Validator.validationToken(token)
+            next()
+        }
+        catch (e) {
+            return res.status(401).json({ message: e.message })
+        }
 
-        if (result instanceof Error)
-            return res.status(401).json({ message: result.message })
-
-        next()
     }
 
     static validationToken(token) {
@@ -30,7 +32,7 @@ export default class Validator {
 
     static createToken(value) {
         return new Promise((resolve, reject) => {
-            jwt.sign(value, process.env.SECRET_TOKEN, { expiresIn: '1d' },(error, token) => {
+            jwt.sign(value, process.env.SECRET_TOKEN, {expiresIn : "365d"},(error, token) => {
                 if (error)
                     reject(error)
                 resolve(token)
