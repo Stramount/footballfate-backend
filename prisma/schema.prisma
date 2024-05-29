@@ -68,6 +68,7 @@ model Jugador {
   apellido       String           @db.Char(20)
   categoria      String           @db.Char(3)
   precio         Float            @db.Float
+  cantTransfer   Int?             @default(0)
   Equipo_Jugador Equipo_Jugador[]
   Estadistica    Estadistica[]
 }

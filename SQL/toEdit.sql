@@ -57,9 +57,34 @@ delete from Estadistica
 
 delete from Jugador
 
-INSERT INTO Jugador('nombre','apellido','categoria','precio')
-values('Sebastian,'Moschen','PT',4.5),('Matias','Quinteros','PT',4.5),('Fabrizio','Galvez','PT',4.5),('Pietro','Elvireti','PT',4.5),('Facundo','Dimitrioff','DEF',4.5),
-('Pietro','Elvireti','',),('Matias','Quinteros','',),('Sebastian','Moschen','',),('Marcos','Valentino','',),('Agustin','Jerez','',),('Tiziano','Ferro','',),
-('Romeno','','',),('','','',),('','','',),('','','',),('','','',)
+INSERT INTO Jugador (nombre, apellido, categoria, precio, cantTransfer) VALUES ('Sebastian', 'Moschen', 'PT', 4.5, 0);
+INSERT INTO Jugador (nombre, apellido, categoria, precio, cantTransfer) VALUES ('Matias', 'Quinteros', 'PT', 4.5, 0);
+INSERT INTO Jugador (nombre, apellido, categoria, precio, cantTransfer) VALUES ('Fabricio', 'Galvez', 'PT', 4.5, 0);
+INSERT INTO Jugador (nombre, apellido, categoria, precio, cantTransfer) VALUES ('Pietro', 'Elviretti', 'PT', 4.5, 0);
+INSERT INTO Jugador (nombre, apellido, categoria, precio, cantTransfer) VALUES ('Bauti', 'Gonzales', 'PT', 4.5, 0);
+INSERT INTO Jugador (nombre, apellido, categoria, precio, cantTransfer) VALUES ('Facundo', 'Dimitroff', 'DEF', 4.5, 0);
+INSERT INTO Jugador (nombre, apellido, categoria, precio, cantTransfer) VALUES ('Pietro', 'Elviretti', 'DEF', 4.5, 0);
+INSERT INTO Jugador (nombre, apellido, categoria, precio, cantTransfer) VALUES ('Matias', 'Quinteros', 'DEF', 4.5, 0);
+INSERT INTO Jugador (nombre, apellido, categoria, precio, cantTransfer) VALUES ('Sebastian', 'Moschen', 'DEF', 4.5, 0);
+INSERT INTO Jugador (nombre, apellido, categoria, precio, cantTransfer) VALUES ('Marco', 'Valentino', 'DEF', 4.5, 0);
+INSERT INTO Jugador (nombre, apellido, categoria, precio, cantTransfer) VALUES ('Agustin', 'Jerez', 'DEF', 4.5, 0);
+INSERT INTO Jugador (nombre, apellido, categoria, precio, cantTransfer) VALUES ('Tiziano', 'Ferro', 'DEF', 4.5, 0);
+INSERT INTO Jugador (nombre, apellido, categoria, precio, cantTransfer) VALUES ('Romeo', 'Dibello', 'DEF', 4.5, 0);
+INSERT INTO Jugador (nombre, apellido, categoria, precio, cantTransfer) VALUES ('Tomas', 'Dular', 'DEF', 4.5, 0);
+INSERT INTO Jugador (nombre, apellido, categoria, precio, cantTransfer) VALUES ('Bauti', 'Gonzales', 'DEF', 4.5, 0);
+INSERT INTO Jugador (nombre, apellido, categoria, precio, cantTransfer) VALUES ('Tiziano', 'Ferro', 'MC', 4.5, 0);
+INSERT INTO Jugador (nombre, apellido, categoria, precio, cantTransfer) VALUES ('Tomas', 'Dular', 'MC', 4.5, 0);
+INSERT INTO Jugador (nombre, apellido, categoria, precio, cantTransfer) VALUES ('Nicolas', 'Rodriguez', 'MC', 4.5, 0);
+INSERT INTO Jugador (nombre, apellido, categoria, precio, cantTransfer) VALUES ('Lautaro', 'Chaparro', 'MC', 4.5, 0);
+INSERT INTO Jugador (nombre, apellido, categoria, precio, cantTransfer) VALUES ('Javier', 'Jimenez', 'MC', 4.5, 0);
+INSERT INTO Jugador (nombre, apellido, categoria, precio, cantTransfer) VALUES ('Fabricio', 'Galvez', 'MC', 4.5, 0);
+INSERT INTO Jugador (nombre, apellido, categoria, precio, cantTransfer) VALUES ('Bauti', 'Gonzales', 'MC', 4.5, 0);
+INSERT INTO Jugador (nombre, apellido, categoria, precio, cantTransfer) VALUES ('Javier', 'Jimenez', 'DEL', 4.5, 0);
+INSERT INTO Jugador (nombre, apellido, categoria, precio, cantTransfer) VALUES ('Marco', 'Valentino', 'DEL', 4.5, 0);
+INSERT INTO Jugador (nombre, apellido, categoria, precio, cantTransfer) VALUES ('Lautaro', 'Chaparro', 'DEL', 4.5, 0);
+INSERT INTO Jugador (nombre, apellido, categoria, precio, cantTransfer) VALUES ('Nicolas', 'Rodriguez', 'DEL', 4.5, 0);
+INSERT INTO Jugador (nombre, apellido, categoria, precio, cantTransfer) VALUES ('Fabricio', 'Galvez', 'DEL', 4.5, 0);
 
+alter table Jugador
+ADD column cantTransfer int default 0
 ;*/

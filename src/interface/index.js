@@ -2,6 +2,7 @@ import { app , sentry , express_ } from "./app.js";
 import {APIrouter} from "../routes/path.routes.js"
 import cookieParse from 'cookie-parser'
 import dotenv from 'dotenv'
+import { Stat } from "../../prisma/entities.database.js";
 
 dotenv.config()
 
@@ -43,6 +44,7 @@ app.use(function onError(err, req, res, next) {
     res.end(res.sentry + "\n");
 });
 */
+
 
 app.listen(3000 , (...things) => {
     console.log(things)
