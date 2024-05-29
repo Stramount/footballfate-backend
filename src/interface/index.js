@@ -6,7 +6,6 @@ import { Stat } from "../../prisma/entities.database.js";
 
 dotenv.config()
 
-/*
 sentry.init({
   dsn: "https://3bafbe230776d91f7f506aeda5a881ce@o4507149535936512.ingest.us.sentry.io/4507149776453632",
   integrations: [
@@ -26,12 +25,11 @@ app.use(sentry.Handlers.requestHandler());
 app.use(sentry.Handlers.tracingHandler());
 
 console.log("sentry activo")
-*/
+
 // All your controllers should live here
-app.use(cookieParse())
 app.use(express_.json())
 app.use("/api" , APIrouter)
-/*
+
 // The error handler must be registered before any other error middleware and after all controllers
 app.use(sentry.Handlers.errorHandler());
 
@@ -43,7 +41,6 @@ app.use(function onError(err, req, res, next) {
     res.statusCode = 500;
     res.end(res.sentry + "\n");
 });
-*/
 
 
 app.listen(3000 , (...things) => {

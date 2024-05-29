@@ -1,4 +1,5 @@
 import { Router } from "express";
+import * as Controller from "../controllers/middlewares.controller.js"
 import { AdminRouter } from "./admin.routes.js";
 import mainController from "../controllers/main.controller.js";
 import { loginSchema, registerSchema } from "../schemas/auth.schema.js";
@@ -20,6 +21,7 @@ async function log(req) {
     console.log(req.cookies.token)
 }
 
+
 // hacer alguna confirmación para proteger la api
 APIrouter.use("/admin" , AdminRouter)
 
@@ -39,6 +41,7 @@ APIrouter.use(mainController.validator.validationTokenRoutes) // middleware para
 APIrouter.get(["/cuenta" , "/cuenta/:ID"], mainController.database.entities.account.getAccount) // router para la cuenta (GET)
 APIrouter.patch(["/cuenta/:ID"], mainController.database.entities.account.UpdateAccount) // router para la cuenta (PATCH)
 APIrouter.delete(["/cuenta/:ID"], mainController.database.entities.account.deleteAccount) // router para la cuenta (DELETE)
+APIrouter.all(["/usuario", "/usuario/:user"], Controller.userController) // router para la cuenta (GET , PATCH , PUT , DELETE)
 
 APIrouter.get(["/equipo", "/equipo/:USERID"], mainController.database.entities.team.getTeam) // leer un equipo
 APIrouter.patch("/equipo/:USERID", mainController.database.entities.team.updateTeam) // editar un equipo
