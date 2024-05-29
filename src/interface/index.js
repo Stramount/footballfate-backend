@@ -44,8 +44,8 @@ app.use(function onError(err, req, res, next) {
     res.end(res.sentry + "\n");
 });
 
+let port = process.env.PORT || 3000
 
-
-app.listen(3000 , (...things) => {
+app.listen(port , (...things) => {
     console.log(things)
 })
