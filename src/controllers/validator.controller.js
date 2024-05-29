@@ -60,6 +60,3 @@ export default class Validator {
         return await bcrypt.compare(password, hash)
     }
 }
-
-
-

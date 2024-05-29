@@ -5,10 +5,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-
-    "dev": "nodemon ./src/interface/index.js",
+    "build": "node ./src/interface/index.js",
+    "dev": "node --watch ./src/interface/index.js",
     "test": "node --experimental-modules ./fetch.test.mjs",
-    "watch": "node --watch ./src/interface/index.js"
+    "bun": "bun run ./src/interface/index.js"
   },
   "repository": {
     "type": "git",
@@ -20,6 +20,9 @@
   "bugs": {
     "url": "https://github.com/Stramount/footballfate-backend/issues"
   },
+  "prisma": {
+    "schema": "./prisma/schema.prisma"
+  },
   "homepage": "https://github.com/Stramount/footballfate-backend#readme",
   "dependencies": {
     "@prisma/client": "^5.14.0",
@@ -28,8 +31,11 @@
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
     "eslint": "^9.1.1",
     "express": "^4.19.2",
+    "firebase": "^10.12.2",
+    "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "nodemon": "^3.1.0",
     "zod": "^3.23.6"

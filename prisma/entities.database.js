@@ -1,4 +1,3 @@
-import { json } from "express"
 import Validator from "../src/controllers/validator.controller.js"
 import { PrismaClient } from "@prisma/client"
 

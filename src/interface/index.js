@@ -2,9 +2,9 @@ import { app , sentry , express_ } from "./app.js";
 import {APIrouter} from "../routes/path.routes.js"
 import cookieParse from 'cookie-parser'
 import dotenv from 'dotenv'
-import { Stat } from "../../prisma/entities.database.js";
 
 dotenv.config()
+
 
 sentry.init({
   dsn: "https://3bafbe230776d91f7f506aeda5a881ce@o4507149535936512.ingest.us.sentry.io/4507149776453632",
@@ -25,12 +25,12 @@ app.use(sentry.Handlers.requestHandler());
 app.use(sentry.Handlers.tracingHandler());
 
 console.log("sentry activo")
-
+console.log(process.env.SECRET_TOKEN)
 
 // All your controllers should live here
+app.use(cookieParse())
 app.use(express_.json())
 app.use("/api" , APIrouter)
-
 
 // The error handler must be registered before any other error middleware and after all controllers
 app.use(sentry.Handlers.errorHandler());
@@ -44,7 +44,8 @@ app.use(function onError(err, req, res, next) {
     res.end(res.sentry + "\n");
 });
 
+let port = process.env.PORT || 3000
 
-app.listen(3000 , (...things) => {
+app.listen(port , (...things) => {
     console.log(things)
 })
