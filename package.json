@@ -5,10 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "build": "npm i && node ./src/interface/index.js",
-    "dev": "nodemon ./src/interface/index.js",
-    "test": "node --experimental-modules ./fetch.test.mjs",
-    "watch": "node --watch ./src/interface/index.js"
+    "build": "node ./src/interface/index.js",
+    "dev": "node --watch ./src/interface/index.js",
+    "test": "node --experimental-modules ./fetch.test.mjs"
   },
   "repository": {
     "type": "git",
