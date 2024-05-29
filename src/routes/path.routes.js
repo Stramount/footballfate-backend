@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { AdminRouter } from "./admin.routes.js";
 import mainController from "../controllers/main.controller.js";
+import { loginSchema, registerSchema } from "../schemas/auth.schema.js";
+
 
 export const APIrouter = Router()
 async function log(req) {
@@ -32,18 +34,16 @@ APIrouter.get("/", (req , res) => res.send("hi")) // bienvenida a la API
 APIrouter.post("/auth/login", mainController.validator.validateSchema(loginSchema), mainController.database.entities.account.login) // router para login (POST)
 APIrouter.post("/auth/register", mainController.validator.validateSchema(registerSchema), mainController.database.entities.account.register) // router para registro (POST)
 
-APIrouter.use(mainController.validator.validationToken)
+APIrouter.use(mainController.validator.validationTokenRoutes) // middleware para validar el token
 
-APIrouter.get(["/cuenta" , "/cuenta/:id"], mainController.database.entities.account.getAccount) // router para la cuenta (GET)
-APIrouter.patch(["/cuenta/:id"], mainController.database.entities.account.UpdateAccount) // router para la cuenta (PATCH)
-APIrouter.delete(["/cuenta/:id"], mainController.database.entities.account.deleteAccount) // router para la cuenta (DELETE)
+APIrouter.get(["/cuenta" , "/cuenta/:ID"], mainController.database.entities.account.getAccount) // router para la cuenta (GET)
+APIrouter.patch(["/cuenta/:ID"], mainController.database.entities.account.UpdateAccount) // router para la cuenta (PATCH)
+APIrouter.delete(["/cuenta/:ID"], mainController.database.entities.account.deleteAccount) // router para la cuenta (DELETE)
 
-APIrouter.get(["/equipo", "/equipo/:nombreEquipo"], mainController.database.entities.team.getTeam) // leer un equipo
-APIrouter.patch(["/equipo/:nombreEquipo"], mainController.database.entities.team.updateTeam) // editar un equipo
+APIrouter.get(["/equipo", "/equipo/:USERID"], mainController.database.entities.team.getTeam) // leer un equipo
+APIrouter.patch("/equipo/:USERID", mainController.database.entities.team.updateTeam) // editar un equipo
+APIrouter.put("/equipo" , mainController.database.entities.team.createTeam) //crea un equipo
 
+APIrouter.put(["/stat", "/stat/:ID"], mainController.database.entities.stat.createStat) // crea stats de un jugador
 
-APIrouter.post(["/stat", "/stat/:nombreJugador"], mainController.database.entities.stat.handleStat) // crea stats de un jugador
-
-APIrouter.get(["/jugador", "/jugador/:name"], mainController.database.entities.player.getPlayer) // leer un jugador o editarlo
-APIrouter.patch(["/jugador/:name"], mainController.database.entities.player.updatePlayer) // leer un jugador o editarlo
-
+APIrouter.get(["/jugador", "/jugador/:ID"], mainController.database.entities.player.getPlayers) // leer un jugador o editarlo
