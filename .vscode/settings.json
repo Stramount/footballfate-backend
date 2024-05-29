@@ -1,0 +1,32 @@
+{
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "b9zxleynykc91qou6jse-mysql.services.clever-cloud.com",
+            "port": 3306,
+            "driver": "MySQL",
+            "database": "b9zxleynykc91qou6jse",
+            "username": "unqgdygbetursdfw",
+            "name": "NuevaDB",
+            "askForPassword": true
+        },
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "monorail.proxy.rlwy.net",
+            "port": 55012,
+            "driver": "MySQL",
+            "name": "DbRailway",
+            "database": "railway",
+            "username": "root",
+            "askForPassword": true
+        }
+    ]
+}

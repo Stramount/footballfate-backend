@@ -1,27 +1,87 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
+  url      = "mysql://root:tthoGxERRNZcFhhEXMeqHoUTwKQzvTDq@monorail.proxy.rlwy.net:55012/railway"
 }
 
 model Equipo {
-  ID_Equipo    Int       @id @default(autoincrement())
-  NombreEquipo String    @db.VarChar(75)
-  Puntuacion   Int
-  Usuario      Usuario[]
+  ID             Int              @id @default(autoincrement())
+  NombreEquipo   String           @db.VarChar(75)
+  Puntuacion     Int
+  ID_Usuario     Int
+  Fecha_ID       Int
+  Usuario        Usuario          @relation(fields: [ID_Usuario], references: [ID], onDelete: Cascade, onUpdate: Restrict, map: "Equipo_ibfk_1")
+  Fecha          Fecha            @relation(fields: [Fecha_ID], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Equipo_ibfk_2")
+  Equipo_Jugador Equipo_Jugador[]
+
+  @@index([ID_Usuario], map: "Equipo_ibfk_1")
+  @@index([Fecha_ID], map: "Fecha_ID")
 }
 
 model Usuario {
-  ID_Usuario  Int    @id @default(autoincrement())
-  Nickname    String @db.Char(35)
-  ID_Equipo   Int
-  Contrase_a  String @map("Contraseña") @db.Char(32)
-  Mail        String @db.Char(54)
-  Presupuesto Float  @db.Float
-  Equipo      Equipo @relation(fields: [ID_Equipo], references: [ID_Equipo], onDelete: NoAction, onUpdate: NoAction, map: "Usuario_ibfk_1")
+  ID             Int      @id @default(autoincrement())
+  Nickname       String   @db.Char(35)
+  Contrase_a     String   @map("Contraseña") @db.VarChar(255)
+  Mail           String   @db.Char(54)
+  Presupuesto    Float    @db.Float
+  Transferencias Int?
+  Wildcard       Boolean?
+  usandoWildcard Int
+  logged         Boolean
+  Equipo         Equipo[]
+}
 
-  @@index([ID_Equipo], map: "ID_Equipo")
+model Estadistica {
+  ID              Int     @id @default(autoincrement())
+  ID_Fecha        Int
+  goles           Int
+  asistencias     Int
+  intercepciones  Int
+  atajadas        Int
+  penalesErrados  Int
+  penalesAtajados Int
+  asistioAClase   Boolean
+  puntos          Int
+  ID_Jugador      Int
+  Fecha           Fecha   @relation(fields: [ID_Fecha], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "Estadistica_ibfk_1")
+  Jugador         Jugador @relation(fields: [ID_Jugador], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "Estadistica_ibfk_2")
+
+  @@index([ID_Fecha], map: "ID_Fecha")
+  @@index([ID_Jugador], map: "ID_Jugador")
+}
+
+model Fecha {
+  ID          Int           @id @default(autoincrement())
+  fecha       String?       @db.Char(25)
+  estaCerrado Int
+  Equipo      Equipo[]
+  Estadistica Estadistica[]
+}
+
+model Jugador {
+  ID             Int              @id @default(autoincrement())
+  nombre         String           @db.Char(15)
+  apellido       String           @db.Char(20)
+  categoria      String           @db.Char(3)
+  precio         Float            @db.Float
+  cantTransfer   Int?             @default(0)
+  Equipo_Jugador Equipo_Jugador[]
+  Estadistica    Estadistica[]
+}
+
+model Equipo_Jugador {
+  ID_Equipo   Int
+  ID_Jugador  Int
+  playerOrder Int
+  esCapitan   Boolean
+  estaEnBanca Boolean
+  Equipo      Equipo  @relation(fields: [ID_Equipo], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "Equipo_Jugador_ibfk_1")
+  Jugador     Jugador @relation(fields: [ID_Jugador], references: [ID], onDelete: Cascade, onUpdate: NoAction, map: "Equipo_Jugador_ibfk_2")
+
+  @@id([ID_Equipo, ID_Jugador])
+  @@index([ID_Jugador], map: "ID_Jugador")
 }
