@@ -26,9 +26,11 @@ app.use(sentry.Handlers.tracingHandler());
 
 console.log("sentry activo")
 
+
 // All your controllers should live here
 app.use(express_.json())
 app.use("/api" , APIrouter)
+
 
 // The error handler must be registered before any other error middleware and after all controllers
 app.use(sentry.Handlers.errorHandler());
