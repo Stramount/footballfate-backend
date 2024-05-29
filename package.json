@@ -5,8 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+
     "dev": "nodemon ./src/interface/index.js",
-    "test": "node --test ./fetch.test.js",
+    "test": "node --experimental-modules ./fetch.test.mjs",
     "watch": "node --watch ./src/interface/index.js"
   },
   "repository": {
