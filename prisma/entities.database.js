@@ -321,7 +321,7 @@ export class Team {
                 }
             })
 
-            let nuevaFecha = await Fecha.createFecha(new Date()) //yyyy-m-d
+            let nuevaFecha = await Fecha.createFecha() //yyyy-m-d
 
             await prisma.equipo.createMany({
                 data: oldTeams.map(t => ({
@@ -379,7 +379,9 @@ export class Fecha {
         return lastFecha
     }
 
-    static async createFecha(date) {
+    static async createFecha() {
+        let date = new Date(Date.now() + 604800000)
+
         const newFecha = await prisma.fecha.create({
             data: {
                 fecha: `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,

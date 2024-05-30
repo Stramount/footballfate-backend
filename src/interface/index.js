@@ -2,6 +2,7 @@ import { app , sentry , express_ } from "./app.js";
 import {APIrouter} from "../routes/path.routes.js"
 import cookieParse from 'cookie-parser'
 import dotenv from 'dotenv'
+import cors from "cors"
 
 dotenv.config()
 
@@ -28,6 +29,7 @@ console.log("sentry activo")
 console.log(process.env.SECRET_TOKEN)
 
 // All your controllers should live here
+app.use(cors())
 app.use(cookieParse())
 app.use(express_.json())
 app.use("/api" , APIrouter)
