@@ -98,13 +98,13 @@ export class Account {
 
                 if (tokenValid.message === 'jwt expired' || tokenValid.message === 'Token no dado') {
                     let token = await Validator.createToken({ email: email })
-                    return res.cookie('token', token).status(200).send(user)
+                    return res.cookie('token', token).cookie("user" , user.ID).status(200).send(user)
                 }
 
                 return res.status(401).send({ message: tokenValid.message })
             }
 
-            return res.send(user)
+            return res.cookie("user" , user.ID).send(user)
         }
 
         return res.status(400).send({message : "Contraseña incorrecta"})
@@ -160,6 +160,7 @@ export class Account {
             }
         })
 
+        res.cookie("user", user.ID)
         return res.json(user)
     }
 }

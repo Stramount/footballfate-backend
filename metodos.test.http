@@ -6,7 +6,7 @@ GET http://localhost:3000/api/cuenta HTTP/1.1
 
 #####
 
-GET http://localhost:3000/api/cuenta/20 HTTP/1.1
+GET http://localhost:3000/api/cuenta/38 HTTP/1.1
 
 #####
 
