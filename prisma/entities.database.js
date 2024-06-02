@@ -91,15 +91,14 @@ export class Account {
         if (!user) { res.status(404); return res.send("Usuario no encontrado") }
 
 
-
-        if (await Validator.comparePassword(password, user.Contrase_a) && req.cookies.token) {
+        if (await Validator.comparePassword(password, user.Contrase_a)) {
             let tokenValid = await Validator.validationToken(req.cookies.token)
 
             if (tokenValid instanceof Error) {
 
-                if (tokenValid.message === 'jwt expired') {
+                if (tokenValid.message === 'jwt expired' || tokenValid.message === 'Token no dado') {
                     let token = await Validator.createToken({ email: email })
-                    return res.cookie('token', token).status(200).send('Token expirado, se ha generado uno nuevo')
+                    return res.cookie('token', token).status(200).send(user)
                 }
 
                 return res.status(401).send({ message: tokenValid.message })
