@@ -32,7 +32,7 @@ console.log(process.env.SECRET_TOKEN)
 app.options('*', cors()) 
 app.use(cookieParse())
 app.use(express_.json())
-app.use("/api" , APIrouter)
+app.use("/api" , cors() , APIrouter)
 
 // The error handler must be registered before any other error middleware and after all controllers
 app.use(sentry.Handlers.errorHandler());
