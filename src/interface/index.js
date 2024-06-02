@@ -29,15 +29,7 @@ console.log("sentry activo")
 console.log(process.env.SECRET_TOKEN)
 
 // All your controllers should live here
-let corsOptions = {
-  "origin": "*",
-  "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
-  "preflightContinue": true,
-  "optionsSuccessStatus": 200,
-  "credentials": true
-}
-
-app.use(cors(corsOptions))
+app.use(cors())
 app.use(cookieParse())
 app.use(express_.json())
 app.use("/api" , APIrouter)
