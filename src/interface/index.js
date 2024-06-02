@@ -34,7 +34,7 @@ let corsOptions = {
   "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
   "preflightContinue": true,
   "optionsSuccessStatus": 200,
-  "credentials": true,"
+  "credentials": true
 }
 
 app.use(cors())
