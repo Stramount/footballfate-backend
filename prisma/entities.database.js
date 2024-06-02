@@ -93,16 +93,16 @@ export class Account {
 
 
         if (await Validator.comparePassword(password, user.Contrase_a) && req.cookies.token) {
-            let user = await Validator.validationToken(req, res, next)
+            let tokenValid = await Validator.validationToken(req.cookies.token)
 
-            if (user instanceof Error) {
+            if (tokenValid instanceof Error) {
 
-                if (user.message === 'jwt expired') {
+                if (tokenValid.message === 'jwt expired') {
                     let token = await Validator.createToken({ email: email })
                     return res.cookie('token', token).status(200).send('Token expirado, se ha generado uno nuevo')
                 }
 
-                return res.status(401).send({ message: user.message })
+                return res.status(401).send({ message: tokenValid.message })
             }
 
             return res.send(user)

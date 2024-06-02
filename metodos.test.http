@@ -18,12 +18,21 @@ POST http://localhost:3000/api/auth/register HTTP/1.1
 Content-Type: application/json
 
 {
-    "username": "eljav22qqqqqqqq222222222i2",
-    "password": "javi22222333333333322222234213",
-    "email": "jajav222222222224444444444i@gmail.com",
-    "teamname": "552222222222P"
+    "username": "javi1252",
+    "password": "12345678",
+    "email": "javi@gmail.com",
+    "teamname": "wollok"
 }
 
+####
+
+POST http://localhost:3000/api/auth/login HTTP/1.1
+Content-Type: application/json
+
+{
+    "email": "javi@gmail.com",
+    "password": "12345678"
+}
 
 ####
 
