@@ -108,7 +108,7 @@ export class Account {
             return res.send(user)
         }
 
-        return res.status(400).send("Contraseña incorrecta")
+        return res.status(400).send({message : "Contraseña incorrecta"})
 
     }
 
