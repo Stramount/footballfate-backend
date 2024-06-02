@@ -6,7 +6,6 @@ import cors from "cors"
 
 dotenv.config()
 
-
 sentry.init({
   dsn: "https://3bafbe230776d91f7f506aeda5a881ce@o4507149535936512.ingest.us.sentry.io/4507149776453632",
   integrations: [

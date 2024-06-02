@@ -1,9 +1,10 @@
-FROM node:22-alpine
+FROM node:22-slim
 
 WORKDIR /api
 
 COPY package.json /api
 RUN npm i
+RUN apt-get update -y && apt-get install -y openssl
 
 WORKDIR /api
 
