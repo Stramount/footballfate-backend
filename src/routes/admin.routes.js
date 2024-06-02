@@ -1,5 +1,1 @@
-import { Router } from "express";
-
-export const AdminRouter = Router()
-
-AdminRouter.get("/" , (req , res) => res.send("Ruta de admins bien pro, nashe nashe nasheeeee"))
+import{Router as e}from"express";export const AdminRouter=e();AdminRouter.get("/",(e,n)=>n.send("Ruta de admins bien pro, nashe nashe nasheeeee"));

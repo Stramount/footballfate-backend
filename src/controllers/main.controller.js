@@ -1,17 +1,1 @@
-import Database from "./database.controller.js";
-import Validator from "./validator.controller.js";
-
-class MainController{
-    constructor(){
-        this.database = new Database()
-        this.validator = Validator
-    }
-
-    async sayHi(req , res){
-        res.send("Hi from main controller")
-    }
-
-
-}
-
-export default new MainController()
+import o from"./database.controller.js";import r from"./validator.controller.js";class MainController{constructor(){this.database=new o,this.validator=r}async sayHi(o,r){r.send("Hi from main controller")}}export default new MainController;

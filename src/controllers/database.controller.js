@@ -1,13 +1,1 @@
-// Importar cliente prisma
-import { Account, Team, Player, Stat } from '../../prisma/entities.database.js'
-
-export default class Database{
-    constructor(){
-        this.entities = {
-            account: Account,
-            team: Team,
-            player: Player,
-            stat: Stat
-        }
-    }
-}
+import{Account as t,Team as a,Player as s,Stat as e}from"../../prisma/entities.database.js";export default class i{constructor(){this.entities={account:t,team:a,player:s,stat:e}}};
