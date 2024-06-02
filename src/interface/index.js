@@ -29,7 +29,7 @@ console.log("sentry activo")
 console.log(process.env.SECRET_TOKEN)
 
 // All your controllers should live here
-app.use(cors())
+app.options('*', cors()) 
 app.use(cookieParse())
 app.use(express_.json())
 app.use("/api" , APIrouter)
