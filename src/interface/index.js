@@ -29,10 +29,16 @@ console.log("sentry activo")
 console.log(process.env.SECRET_TOKEN)
 
 // All your controllers should live here
-app.options('*', cors()) 
+let corsOpt = {
+  "origin": true,
+  "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+  "preflightContinue": false,
+  "optionsSuccessStatus": 204
+}
+
 app.use(cookieParse())
 app.use(express_.json())
-app.use("/api" , APIrouter)
+app.use("/api" , cors(corsOpt) , APIrouter)
 
 // The error handler must be registered before any other error middleware and after all controllers
 app.use(sentry.Handlers.errorHandler());
