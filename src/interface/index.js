@@ -36,7 +36,7 @@ let corsOpt = {
   "credentials" : true
 }
 
-app.options('*', cors())
+app.options('*', cors(corsOpt))
 app.use(cookieParse())
 app.use(express_.json())
 app.use("/api" , cors(corsOpt) , APIrouter)
