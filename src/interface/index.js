@@ -31,10 +31,12 @@ console.log(process.env.SECRET_TOKEN)
 let corsOpt = {
   "origin": true,
   "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
-  "preflightContinue": false,
-  "optionsSuccessStatus": 204
+  "preflightContinue": true,
+  "optionsSuccessStatus": 200,
+  "credentials" : true
 }
 
+app.options('*', cors())
 app.use(cookieParse())
 app.use(express_.json())
 app.use("/api" , cors(corsOpt) , APIrouter)
