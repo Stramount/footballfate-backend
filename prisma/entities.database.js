@@ -312,6 +312,18 @@ export class Team {
         await prisma.$transaction(async (prisma) => {
             const query_id = await Fecha.getFecha()
 
+            // Actualizar el wildcard de todos los usuarios, si lo estan usando (1 == true) se desactiva
+
+            await prisma.usuario.updateMany({
+                where: {
+                    usandoWildcard: 1
+                },
+                data: {
+                    Wildcard: false,
+                    usandoWildcard: 0
+                }
+            })
+
             const oldTeams = await prisma.equipo.findMany({
                 where: {
                     Fecha_ID: query_id.ID
